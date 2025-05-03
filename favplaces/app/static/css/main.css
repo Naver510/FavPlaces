@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar a,
+.navbar form {
+    margin-left: 15px;
+}
+
+.navbar button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.navbar button:hover {
+    background-color: #45a049;
+}
+
+.content {
+    padding: 20px;
+}
+
+.user-info {
+    margin-right: 10px;
+}

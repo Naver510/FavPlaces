@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Strona Główna</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <div class="navbar">
+        <div><strong>FavPlaces</strong></div>
+        <div style="display: flex; align-items: center;">
+            {% if uzytkownik %}
+                <div class="user-info">{{ uzytkownik.Imie }} {{ uzytkownik.Nazwisko }}</div>
+                <form method="post" action="{% url 'wyloguj' %}">
+                    {% csrf_token %}
+                    <button type="submit">Wyloguj</button>
+                </form>
+            {% else %}
+                <a href="{% url 'logowanie' %}"><button>Zaloguj się</button></a>
+                <a href="{% url 'rejestracja' %}"><button>Zarejestruj się</button></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Witaj na stronie głównej!</h2>
+        <p>Tutaj możesz dodać zawartość strony głównej, np. opis projektu lub funkcjonalności.</p>
+    </div>
+</body>
+</html>
