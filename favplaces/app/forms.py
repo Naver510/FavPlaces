@@ -1,5 +1,5 @@
 from django import forms
-from .models import Uzytkownik
+from .models import Uzytkownik, Miejsce
 
 class RejestracjaForm(forms.ModelForm):
     class Meta:
@@ -12,3 +12,9 @@ class RejestracjaForm(forms.ModelForm):
 class LogowanieForm(forms.Form):
     email = forms.EmailField(label='Email')
     haslo = forms.CharField(widget=forms.PasswordInput(), label='Hasło')
+
+
+class MiejsceForm(forms.ModelForm):
+    class Meta:
+        model = Miejsce
+        fields = ['Nazwa', 'Adres', 'Opis']

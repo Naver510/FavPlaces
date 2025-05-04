@@ -16,8 +16,8 @@ class HistoriaWyszukiwan(models.Model):
 
 
 class Miejsce(models.Model):
-    ID_Miejsca = models.AutoField(primary_key=True)
-    ID_Regionu = models.ForeignKey('Region', db_column='ID_Regionu', on_delete=models.DO_NOTHING)
+    ID_Miejsce = models.AutoField(primary_key=True)
+    ID_Region = models.ForeignKey('Region', db_column='ID_Region', on_delete=models.DO_NOTHING)
     ID_Kategoria = models.ForeignKey('Kategoria', db_column='ID_Kategoria', on_delete=models.DO_NOTHING)
     ID_Użytkownik = models.ForeignKey('Uzytkownik', db_column='ID_Użytkownik', on_delete=models.DO_NOTHING)
     Nazwa = models.CharField(max_length=100)

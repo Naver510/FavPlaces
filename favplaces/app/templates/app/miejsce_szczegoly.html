@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ miejsce.nazwa }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="content">
+        <h2>{{ miejsce.nazwa }}</h2>
+        <img src="{{ miejsce.zdjecie.url }}" style="max-width: 300px;">
+        <p><strong>Adres:</strong> {{ miejsce.adres }}</p>
+        <p><strong>Mapa:</strong> <a href="{{ miejsce.link_do_mapy }}" target="_blank">Google Maps</a></p>
+        <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5</p>
+        <a href="{% url 'strona_glowna' %}">← Wróć</a>
+    </div>
+</body>
+</html>
