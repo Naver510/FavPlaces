@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Atrakcje</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div><strong>FavPlaces</strong></div>
+    <div style="display: flex; align-items: center;">
+        {% if uzytkownik %}
+            <div class="user-info">{{ uzytkownik.Imie }} {{ uzytkownik.Nazwisko }}</div>
+            <form method="post" action="{% url 'wyloguj' %}">{% csrf_token %}
+                <button type="submit">Wyloguj</button>
+            </form>
+        {% else %}
+            <a href="{% url 'logowanie' %}"><button>Zaloguj się</button></a>
+            <a href="{% url 'rejestracja' %}"><button>Zarejestruj się</button></a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="search-bar">
+    <form method="get" action="{% url 'atrakcje' %}" class="search-form">
+        <input type="text" name="q" placeholder="Szukaj miejsc..." value="{{ query }}">
+        <button type="submit">Szukaj</button>
+    </form>
+
+    {% if uzytkownik %}
+        <a href="{% url 'dodaj_miejsce' %}">
+            <button class="add-place-button">Dodaj miejsce</button>
+        </a>
+    {% endif %}
+</div>
+
+<div class="content">
+    {% for miejsce in miejsca %}
+    <div class="miejsce-box">
+        {% if miejsce.zdjecie %}
+    <img src="{{ miejsce.zdjecie.URL }}" alt="Zdjęcie miejsca">
+{% else %}
+    <p>Brak zdjęcia</p>
+{% endif %}
+
+        <div class="miejsce-info">
+            <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
+            <p><strong>Adres:</strong> {{ miejsce.Adres }} </p>
+            <!-- <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5
+                {% for i in "12345"|slice:":5" %}
+                    {% if forloop.counter <= miejsce.ocena %}
+                        ⭐
+                    {% else %}
+                        ☆
+                    {% endif %}
+                {% endfor %} -->
+            </p>
+            <a class="wiecej-button">Więcej</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>

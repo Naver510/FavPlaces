@@ -31,7 +31,7 @@ def logowanie(request):
             try:
                 uzytkownik = Uzytkownik.objects.get(Mail=email, Hasło=haslo)
                 request.session['uzytkownik_id'] = uzytkownik.ID_Użytkownik
-                return redirect('strona_glowna')  # nazwij tak swój widok docelowy
+                return redirect('atrakcje')  # nazwij tak swój widok docelowy
             except Uzytkownik.DoesNotExist:
                 blad = "Nieprawidłowy email lub hasło."
     else:
@@ -41,7 +41,7 @@ def logowanie(request):
 
 
 
-def strona_glowna(request):
+def atrakcje(request):
     query = request.GET.get('q', '')  # pobranie zapytania z paska wyszukiwania
     miejsca = Miejsce.objects.all()
 
@@ -62,8 +62,17 @@ def strona_glowna(request):
         'query': query,
     }
 
-    return render(request, 'app/strona_glowna.html', context)
+    return render(request, 'app/atrakcje.html', context)
 
+def strona_glowna(request):
+    return render(request, 'app/strona_glowna.html')
+
+
+def historia(request):
+    return render(request, 'app/historia.html')
+
+def kontakt(request):
+    return render(request, 'app/kontakt.html')
 
 
 @csrf_exempt
@@ -72,7 +81,7 @@ def wyloguj(request):
         del request.session['uzytkownik_id']
     except KeyError:
         pass
-    return redirect('strona_glowna')
+    return redirect('atrakcje')
 
 
 
@@ -112,7 +121,7 @@ def dodaj_miejsce(request):
                     print("Błąd pobierania obrazu:", e)
 
             miejsce.save()
-            return redirect('strona_glowna')
+            return redirect('atrakcje')
     else:
         form = MiejsceForm()
 
