@@ -12,6 +12,26 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
+            <div>
+                <label for="category">Kategoria:</label>
+                <select id="category" name="category">
+                    {% for kat in kategorie %}
+                        <option value="{{ kat.id }}">{{ kat.nazwa }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="region">Region:</label>
+                <select id="region" name="region">
+                    {% for reg in regiony %}
+                        <option value="{{ reg.id }}">{{ reg.nazwa }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="image_url">Lub wklej URL zdjęcia:</label>
+                <input type="url" id="image_url" name="image_url" placeholder="https://example.com/image.jpg">
+            </div>            
             <button type="submit">Zapisz</button>
         </form>
     </div>
