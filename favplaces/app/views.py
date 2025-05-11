@@ -43,10 +43,16 @@ def logowanie(request):
 
 def atrakcje(request):
     query = request.GET.get('q', '')  # pobranie zapytania z paska wyszukiwania
+    sort = request.GET.get('sort', '')  # pobranie parametru sortowania
     miejsca = Miejsce.objects.all()
 
     if query:
         miejsca = miejsca.filter(Nazwa__icontains=query)
+
+    if sort == 'asc':
+        miejsca = miejsca.order_by('Nazwa')  # sortowanie rosnąco
+    elif sort == 'desc':
+        miejsca = miejsca.order_by('-Nazwa')  # sortowanie malejąco
 
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
