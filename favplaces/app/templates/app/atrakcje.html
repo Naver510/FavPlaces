@@ -26,6 +26,11 @@
     <form method="get" action="{% url 'atrakcje' %}" class="search-form">
         <input type="text" name="q" placeholder="Szukaj miejsc..." value="{{ query }}">
         <button type="submit">Szukaj</button>
+        <select name="sort" class="sort-dropdown" onchange="this.form.submit()">
+            <option value="" {% if not request.GET.sort %}selected{% endif %}>Sortowanie</option>
+            <option value="asc" {% if request.GET.sort == "asc" %}selected{% endif %}>Alfabetycznie ↑</option>
+            <option value="desc" {% if request.GET.sort == "desc" %}selected{% endif %}>Alfabetycznie ↓</option>
+        </select>
     </form>
 
     {% if uzytkownik %}
