@@ -136,4 +136,4 @@ def dodaj_miejsce(request):
 
 def miejsce_szczegoly(request, id):
     miejsce = get_object_or_404(Miejsce, pk=id)
-    return render(request, 'uzytkownicy/miejsce_szczegoly.html', {'miejsce': miejsce})
+    return render(request, 'app/miejsce_szczegoly.html', {'miejsce': miejsce})
