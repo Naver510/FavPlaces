@@ -17,4 +17,11 @@ class LogowanieForm(forms.Form):
 class MiejsceForm(forms.ModelForm):
     class Meta:
         model = Miejsce
-        fields = ['Nazwa', 'Adres', 'Opis']
+        fields = ['Nazwa', 'Adres', 'ID_Kategoria', 'ID_Region', 'Opis']
+        widgets = {
+            'Nazwa': forms.TextInput(attrs={'placeholder': 'Podaj nazwę'}),
+            'Adres': forms.TextInput(attrs={'placeholder': 'Podaj adres'}),
+            'ID_Kategoria': forms.Select(),
+            'ID_Region': forms.Select(),
+            'Opis': forms.Textarea(attrs={'placeholder': 'Dodaj opis...', 'rows': 4}),
+        }

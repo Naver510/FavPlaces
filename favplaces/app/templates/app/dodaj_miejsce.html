@@ -3,37 +3,34 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Dodaj miejsce</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Dodaj atrakcje</title>
+    <link rel="stylesheet" href="{% static 'css/dodaj_miejsce.css' %}">
 </head>
 <body>
-    <div class="content">
-        <h2>Dodaj nowe miejsce</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <div>
-                <label for="category">Kategoria:</label>
-                <select id="category" name="category">
-                    {% for kat in kategorie %}
-                        <option value="{{ kat.id }}">{{ kat.nazwa }}</option>
-                    {% endfor %}
-                </select>
+    <h1>Dodaj atrakcje</h1>
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        <div class="left-form">
+            {{ form.Nazwa }}
+            {{ form.Adres }}
+            {{ form.ID_Kategoria }}
+            {{ form.ID_Region }}
+        </div>
+        <div class="right-form">
+            <div class="upload-box">
+                <span>+ dodaj zdjęcie</span>
             </div>
-            <div>
-                <label for="region">Region:</label>
-                <select id="region" name="region">
-                    {% for reg in regiony %}
-                        <option value="{{ reg.id }}">{{ reg.nazwa }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div>
-                <label for="image_url">Lub wklej URL zdjęcia:</label>
-                <input type="url" id="image_url" name="image_url" placeholder="https://example.com/image.jpg">
-            </div>            
-            <button type="submit">Zapisz</button>
-        </form>
-    </div>
+        </div>
+        <div class="rating">
+            <label>Ocena:</label>
+            <span>★ ☆ ☆ ☆ ☆</span> <!-- Na razie statycznie, bo model nie ma oceny -->
+        </div>
+        <div class="full-width">
+            {{ form.Opis }}
+        </div>
+        <div class="full-width">
+            <button type="submit">Dodaj</button>
+        </div>
+    </form>
 </body>
 </html>

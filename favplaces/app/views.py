@@ -97,47 +97,21 @@ def dodaj_miejsce(request):
 
     if request.method == 'POST':
         form = MiejsceForm(request.POST)
-        category = request.POST.get('category')
-        region = request.POST.get('region')
-        uploaded_image = request.FILES.get('image')
-        image_url = request.POST.get('image_url')
 
         if form.is_valid():
             miejsce = form.save(commit=False)
-            miejsce.ID_Kategoria_id = int(category)
-            miejsce.ID_Region_id = int(region)
-            miejsce.ID_Uzytkownik_id = request.session.get('uzytkownik_id')
+            uzytkownik_id = request.session.get('uzytkownik_id')
+            miejsce.ID_Użytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
+            miejsce.ID_Miejsce = Miejsce.objects.count() + 1
             miejsce.Data_dodania = timezone.now()
-
-            # Obsługa zdjęcia
-            if uploaded_image:
-                zdjecie_obj = Zdjecie.objects.create(plik=uploaded_image)
-                miejsce.ID_Zdjęcie_id = zdjecie_obj.id
-
-            elif image_url:
-                try:
-                    response = requests.get(image_url)
-                    if response.status_code == 200:
-                        file_name = image_url.split("/")[-1]
-                        content = ContentFile(response.content)
-                        zdjecie_obj = Zdjecie()
-                        zdjecie_obj.plik.save(file_name, content, save=True)
-                        miejsce.ID_Zdjęcie = zdjecie_obj
-                except Exception as e:
-                    print("Błąd pobierania obrazu:", e)
 
             miejsce.save()
             return redirect('atrakcje')
     else:
         form = MiejsceForm()
 
-    kategorie = Kategoria.objects.all()
-    regiony = Region.objects.all()
-
     return render(request, 'app/dodaj_miejsce.html', {
         'form': form,
-        'kategorie': kategorie,
-        'regiony': regiony
     })
 
 def miejsce_szczegoly(request, id):

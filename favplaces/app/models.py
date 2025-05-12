@@ -59,7 +59,7 @@ class Region(models.Model):
         db_table = 'Region'  
 
     def __str__(self):
-        return self.nazwa
+        return self.Nazwa
 
 class Uprawnienia(models.Model):
     ID_Uprawnienia = models.AutoField(primary_key=True)
@@ -112,4 +112,4 @@ class Kategoria(models.Model):
         db_table = 'Kategoria'  
 
     def __str__(self):
-        return self.nazwa
+        return self.Nazwa
