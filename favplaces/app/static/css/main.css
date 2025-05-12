@@ -111,22 +111,3 @@ body {
 .add-place-button:hover {
     background-color: #45a049;
 }
-
-.sort-dropdown {
-    padding: 8px 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-.sort-dropdown:hover {
-    background-color: #45a049;
-}
-
-.sort-dropdown:focus {
-    outline: none;
-}
