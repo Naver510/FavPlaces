@@ -1,11 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <title>Dodaj atrakcje</title>
     <link rel="stylesheet" href="{% static 'css/dodaj_miejsce.css' %}">
 </head>
+
 <body>
     <h1>Dodaj atrakcje</h1>
     <form method="post" class="form-container">
@@ -30,7 +32,9 @@
         </div>
         <div class="full-width">
             <button type="submit">Dodaj</button>
+            <a href="{% url 'strona_glowna' %}">Anuluj</a>
         </div>
     </form>
 </body>
+
 </html>
