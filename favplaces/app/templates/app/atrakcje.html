@@ -58,21 +58,22 @@
         {% for miejsce in miejsca %}
         <div class="miejsce-box">
             {% if miejsce.zdjecie %}
-        <img src="{{ miejsce.zdjecie.URL }}" alt="Zdjęcie miejsca">
-        {% else %}
-        <p>Brak zdjęcia</p>
-        {% endif %}
+            <img src="{{ Zdjęcia.URL }}" alt="Zdjęcie miejsca">
+            {% else %}
+            <p>Brak zdjęcia</p>
+            {% endif %}
 
             <div class="miejsce-info">
                 <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
                 <p><strong>Adres:</strong> {{ miejsce.Adres }} </p>
-                <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5
+                <p>
+                    <strong>Ocena:</strong> {{ miejsce.ocena }}/5
                     {% for i in "12345"|slice:":5" %}
-                        {% if forloop.counter <= miejsce.ocena %}
-                            ⭐
-                        {% else %}
-                            ☆
-                        {% endif %}
+                    {% if forloop.counter <= miejsce.ocena %}
+                    ⭐
+                    {% else %}
+                    ☆
+                    {% endif %}
                     {% endfor %}
                 </p>
                 <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}" class="wiecej-button">Więcej</a>
