@@ -89,9 +89,9 @@ class Uzytkownik(models.Model):
     
 class Zdjęcia(models.Model):
     ID_Zdjęcie = models.AutoField(primary_key=True)
-    ID_Miejsce = models.ForeignKey('Miejsce', db_column='ID_Miejsce', on_delete=models.DO_NOTHING, null=True, blank=True)
+    ID_Miejsce = models.ForeignKey('Miejsce', db_column='ID_Miejsce', on_delete=models.DO_NOTHING, null=True, blank=True, related_name='zdjęcia')
     ID_Recenzja = models.ForeignKey('Recenzja', db_column='ID_Recenzja', on_delete=models.DO_NOTHING, null=True, blank=True)
-    obraz = models.ImageField(upload_to='zdjecia/', null=True, blank=True)  # dla plików lokalnych
+    #obraz = models.ImageField(upload_to='zdjecia/', null=True, blank=True)  # dla plików lokalnych
     URL = models.CharField(max_length=255, null=True, blank=True)  # dla zewnętrznych linków
 
 

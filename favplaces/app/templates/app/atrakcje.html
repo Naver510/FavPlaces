@@ -57,11 +57,13 @@
     
         {% for miejsce in miejsca %}
         <div class="miejsce-box">
-            {% if miejsce.zdjecie %}
-            <img src="{{ Zdjęcia.URL }}" alt="Zdjęcie miejsca">
+            {% for zdjecie in miejsce.zdjęcia.all %}
+            {% if zdjecie.URL %}
+            <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
             {% else %}
-            <p>Brak zdjęcia</p>
+            <p>Brak zdjęcia z URL</p>
             {% endif %}
+            {% endfor %}
 
             <div class="miejsce-info">
                 <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
