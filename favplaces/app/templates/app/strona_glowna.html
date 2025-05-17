@@ -1,54 +1,65 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Strona Główna</title>
 
     <!--basic css template-->
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
 
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  </head>
+  <body>
     <div class="navbar">
-        <a href="{% url 'strona_glowna' %}">
-            <div><strong>FavPlaces</strong></div>
-        </a>
-        
-        <div style="display: flex; align-items: center;">
-            {% if uzytkownik %}
-                <div class="user-info">{{ uzytkownik.Imie }} {{ uzytkownik.Nazwisko }}</div>
-                <form method="post" action="{% url 'wyloguj' %}">{% csrf_token %}
-                    <button type="submit">Wyloguj</button>
-                </form>
-            {% else %}
-                <a href="{% url 'logowanie' %}"><button>Zaloguj się</button></a>
-                <a href="{% url 'rejestracja' %}"><button>Zarejestruj się</button></a>
-            {% endif %}
+      <a href="{% url 'strona_glowna' %}">
+        <div><strong>FavPlaces</strong></div>
+      </a>
+
+      <div style="display: flex; align-items: center">
+        {% if uzytkownik %}
+        <div class="user-info">
+          {{ uzytkownik.Imie }} {{ uzytkownik.Nazwisko }}
         </div>
+        <form method="post" action="{% url 'wyloguj' %}">
+          {% csrf_token %}
+          <button type="submit">Wyloguj</button>
+        </form>
+        {% else %}
+        <a href="{% url 'logowanie' %}"><button>Zaloguj się</button></a>
+        <a href="{% url 'rejestracja' %}"><button>Zarejestruj się</button></a>
+        {% endif %}
+      </div>
     </div>
 
     <div class="sub-navbar">
-        <a href="{% url 'atrakcje' %}">Atrakcje </a>
-        <a href="{% url 'historia' %}">Historia </a>
-        <a href="{% url 'kontakt' %}">Kontakt </a>
+      <a href="{% url 'atrakcje' %}">Atrakcje </a>
+      <a href="{% url 'historia' %}">Historia </a>
+      <a href="{% url 'kontakt' %}">Kontakt </a>
     </div>
 
     <div class="content">
-        <div class="home-search-bar">
-            <form method="get" action="{% url 'atrakcje' %}" class="home-search-form">
-                <input type="text" name="q" placeholder="Szukaj miejsc..." value="{{ query }}">
-                <button type="submit">Szukaj</button>
-            </form>
-        </div>
-        
-        <div class="add-attraction-btn">
-            <a href="{% url 'dodaj_miejsce' %}">
-                <button class="add-attraction-button">Dodaj Atrakcję</button>
-            </a>
-        </div>
+      <div class="home-search-bar">
+        <form
+          method="get"
+          action="{% url 'atrakcje' %}"
+          class="home-search-form"
+        >
+          <input
+            type="text"
+            name="q"
+            placeholder="Szukaj miejsc..."
+            value="{{ query }}"
+          />
+          <button type="submit">Szukaj</button>
+        </form>
+      </div>
 
+      <div class="add-attraction-btn">
+        <a href="{% url 'dodaj_miejsce' %}">
+          <button class="add-attraction-button">Dodaj Atrakcję</button>
+        </a>
+      </div>
     </div>
-</body>
+  </body>
 </html>

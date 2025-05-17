@@ -6,7 +6,7 @@
 </head>
 <body>
     <h2>Formularz rejestracji</h2>
-    <form method="post">
+    <form method="post" autocomplete="off">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Zarejestruj">
