@@ -1,13 +1,34 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from .models import Uzytkownik, Miejsce
 
 class RejestracjaForm(forms.ModelForm):
+    Haslo2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label='Potwierdź hasło'
+    )
+
     class Meta:
         model = Uzytkownik
         fields = ['Imie', 'Nazwisko', 'Mail', 'Hasło']
         widgets = {
-            'Hasło': forms.PasswordInput(),
+            'Imie': forms.TextInput(attrs={'class': 'form-control'}),
+            'Nazwisko': forms.TextInput(attrs={'class': 'form-control'}),
+            'Mail': forms.EmailInput(attrs={'class': 'form-control'}),
+            'Hasło': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        haslo1 = cleaned_data.get("Hasło")
+        haslo2 = cleaned_data.get("Haslo2")
+
+        if haslo1 and haslo2 and haslo1 != haslo2:
+            raise ValidationError("Hasła nie są takie same.")
+
+        return cleaned_data
+
+
 
 class LogowanieForm(forms.Form):
     email = forms.EmailField(label='Email')

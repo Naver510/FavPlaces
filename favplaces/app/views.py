@@ -71,14 +71,37 @@ def atrakcje(request):
     return render(request, 'app/atrakcje.html', context)
 
 def strona_glowna(request):
-    return render(request, 'app/strona_glowna.html')
+    uzytkownik = None
+    if 'uzytkownik_id' in request.session:
+        uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=request.session['uzytkownik_id'])
+
+    return render(request, 'app/strona_glowna.html', {'uzytkownik': uzytkownik})
+
 
 
 def historia(request):
-    return render(request, 'app/historia.html')
+    uzytkownik = None
+    uzytkownik_id = request.session.get('uzytkownik_id')
+    if uzytkownik_id:
+        try:
+            uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
+        except Uzytkownik.DoesNotExist:
+            request.session.flush()
+
+    return render(request, 'app/historia.html', {'uzytkownik': uzytkownik})
+
 
 def kontakt(request):
-    return render(request, 'app/kontakt.html')
+    uzytkownik = None
+    uzytkownik_id = request.session.get('uzytkownik_id')
+    if uzytkownik_id:
+        try:
+            uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
+        except Uzytkownik.DoesNotExist:
+            request.session.flush()
+
+    return render(request, 'app/kontakt.html', {'uzytkownik': uzytkownik})
+
 
 
 @csrf_exempt
@@ -95,6 +118,14 @@ def dodaj_miejsce(request):
     if not request.session.get('uzytkownik_id'):
         return redirect('logowanie')
 
+    uzytkownik = None
+    uzytkownik_id = request.session.get('uzytkownik_id')
+    if uzytkownik_id:
+        try:
+            uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
+        except Uzytkownik.DoesNotExist:
+            request.session.flush()
+            return redirect('logowanie')
     if request.method == 'POST':
         form = MiejsceForm(request.POST)
 
@@ -112,10 +143,24 @@ def dodaj_miejsce(request):
 
     return render(request, 'app/dodaj_miejsce.html', {
         'form': form,
+        'uzytkownik': uzytkownik
     })
 
 def miejsce_szczegoly(request, id):
     miejsce = get_object_or_404(Miejsce, pk=id)
+
+    uzytkownik = None
+    uzytkownik_id = request.session.get('uzytkownik_id')
+    if uzytkownik_id:
+        try:
+            uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
+        except Uzytkownik.DoesNotExist:
+            request.session.flush()
+
+    return render(request, 'app/miejsce_szczegoly.html', {
+        'miejsce': miejsce,
+        'uzytkownik': uzytkownik
+    })
     return render(request, 'app/miejsce_szczegoly.html', {'miejsce': miejsce})
 
 def miejsca_lista(request):
