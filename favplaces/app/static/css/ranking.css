@@ -1,0 +1,41 @@
+body {
+    background: #f9f1f0;
+}
+
+h1 {
+    margin-left: 60px;
+}
+
+.ranking-box {
+  max-width: 1500px;
+  margin: 40px auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
+
+.ranking-position {
+  font-size: 24px;
+  font-weight: bold;
+  width: 60px;
+  text-align: center;
+  color: #ff7a7a;
+}
+
+.ranking-details h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.ranking-details p {
+  margin: 4px 0;
+  color: #555;
+}

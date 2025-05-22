@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <title>Historia</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/historia.css' %}" />
   </head>
   <body>
     <div class="navbar">
@@ -32,12 +32,23 @@
     <div class="sub-navbar">
       <a href="{% url 'atrakcje' %}">Atrakcje</a>
       <a href="{% url 'historia' %}">Historia</a>
-      <a href="{% url 'kontakt' %}">Kontakt</a>
+      <a href="{% url 'ranking' %}">Ranking</a>
     </div>
 
     <div class="content">
-      <h1>Strona Historia</h1>
-      <p>tutaj pusta strona trzeba zrobić :D</p>
+      <!-- Pasek wyszukiwania historii -->
+      <div class="his-search-bar">
+        <form class="his-search-form" method="get" action="{% url 'historia' %}">
+          <input type="text" name="q" placeholder="Szukaj w historii...">
+          <button type="submit">Szukaj</button>
+        </form>
+      </div>
+
+      <div class="shadow-panel">
+        <h2>Twoja historia wyszukiwania</h2>
+        <p>Tutaj będą wyświetlane ostatnie wyszukiwane miejsca lub działania użytkownika.</p>
+      </div>
+      
     </div>
   </body>
 </html>

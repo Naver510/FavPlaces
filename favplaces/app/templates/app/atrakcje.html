@@ -32,14 +32,13 @@
     <div class="sub-navbar">
         <a href="{% url 'atrakcje' %}">Atrakcje </a>
         <a href="{% url 'historia' %}">Historia </a>
-        <a href="{% url 'kontakt' %}">Kontakt </a>
+        <a href="{% url 'ranking' %}">Ranking </a>
     </div>
 
     <div class="content">
         <div class="atrakcje-search-bar">
             <form method="get" action="{% url 'atrakcje' %}" class="atrakcje-search-form">
                 <input type="text" name="q" placeholder="Szukaj miejsc..." value="{{ query }}">
-                <button type="submit">Szukaj</button>
                 <select name="sort" class="sort-dropdown" onchange="this.form.submit()">
                     <option value="" {% if not request.GET.sort %}selected{% endif %}>Sortowanie</option>
                     <option value="asc" {% if request.GET.sort == "asc" %}selected{% endif %}>Alfabetycznie ↑</option>
@@ -48,7 +47,7 @@
             </form>
                 {% if uzytkownik %}
                     <a href="{% url 'dodaj_miejsce' %}">
-                        <button class="add-place-button">Dodaj miejsce</button>
+                        <button class="add-place-button">Dodaj atrakcje</button>
                     </a>
                 {% endif %}
             

@@ -38,7 +38,7 @@ a, a:hover, a:visited{
 }
 
 .navbar button:hover {
-    background-color: #f4b9b8;
+    color: #f4b9b8;
 }
 
 .user-info {

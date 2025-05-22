@@ -13,7 +13,7 @@ def rejestracja(request):
             uzytkownik.ID_Uprawnienia = Uprawnienia.objects.get(ID_Uprawnienia=2)
             uzytkownik.ID_Użytkownik = Uzytkownik.objects.count() + 1
             uzytkownik.save()
-            return redirect('/')  
+            return redirect('strona_glowna')  
     else:
         form = RejestracjaForm()
     
@@ -31,7 +31,7 @@ def logowanie(request):
             try:
                 uzytkownik = Uzytkownik.objects.get(Mail=email, Hasło=haslo)
                 request.session['uzytkownik_id'] = uzytkownik.ID_Użytkownik
-                return redirect('atrakcje')  # nazwij tak swój widok docelowy
+                return redirect('strona_glowna')  # nazwij tak swój widok docelowy
             except Uzytkownik.DoesNotExist:
                 blad = "Nieprawidłowy email lub hasło."
     else:
@@ -91,7 +91,7 @@ def historia(request):
     return render(request, 'app/historia.html', {'uzytkownik': uzytkownik})
 
 
-def kontakt(request):
+def ranking(request):
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
     if uzytkownik_id:
@@ -100,7 +100,7 @@ def kontakt(request):
         except Uzytkownik.DoesNotExist:
             request.session.flush()
 
-    return render(request, 'app/kontakt.html', {'uzytkownik': uzytkownik})
+    return render(request, 'app/ranking.html', {'uzytkownik': uzytkownik})
 
 
 
