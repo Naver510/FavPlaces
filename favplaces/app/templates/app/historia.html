@@ -41,7 +41,7 @@
             <form class="his-search-form" method="get" action="{% url 'historia' %}">
                 <input type="text" name="q" placeholder="Szukaj w historii..." value="{{ q }}">
                 <button type="submit" class="his-search-button">Szukaj</button>
-                <input type="date" name="data_wyszukiwania" class="calendar-picker" />                
+                <input type="date" name="data_wyszukiwania" class="calendar-picker" value="{{ data_wyszukiwania }}"/>                
             </form>
         </div>
 
@@ -75,6 +75,7 @@
         {% else %}
         <p>Brak historii wyszukiwań do wyświetlenia.</p>
         {% endif %}
+        
         </div>
 </body>
 </html>

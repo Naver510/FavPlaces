@@ -5,6 +5,7 @@ from .models import Uzytkownik, Uprawnienia, Miejsce, Kategoria, Region, Zdjęci
 from django.utils import timezone
 from django.core.files.base import ContentFile
 from django.db.models import Q
+from datetime import datetime
 
 def rejestracja(request):
     if request.method == 'POST':
@@ -80,27 +81,46 @@ def strona_glowna(request):
 
 
 
+
 def historia(request):
     uzytkownik = None
     historia_lista = []
     uzytkownik_id = request.session.get('uzytkownik_id')
+
     if uzytkownik_id:
         try:
             uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
+
             query = request.GET.get('q', '')
+            data_wyszukiwania = request.GET.get('data_wyszukiwania', '')
+
             historia_qs = HistoriaWyszukiwan.objects.filter(ID_Użytkownik=uzytkownik).order_by('-Data_wyszukiwania')
+
             if query:
                 historia_qs = historia_qs.filter(
-            Q(ID_Miejsca__Nazwa__icontains=query) |
-            Q(ID_Miejsca__Miejscowość__icontains=query)
-        )
+                    Q(ID_Miejsca__Nazwa__icontains=query) |
+                    Q(ID_Miejsca__Miejscowość__icontains=query)
+                )
+
+            if data_wyszukiwania:
+                try:
+                    # konwertujemy na obiekt daty
+                    data_obj = datetime.strptime(data_wyszukiwania, '%Y-%m-%d').date()
+                    historia_qs = historia_qs.filter(Data_wyszukiwania__date=data_obj)
+                except ValueError:
+                    pass  # zignoruj złą datę
+
             historia_lista = historia_qs
+
         except Uzytkownik.DoesNotExist:
             request.session.flush()
 
-    return render(request, 'app/historia.html', {'uzytkownik': uzytkownik,
+    return render(request, 'app/historia.html', {
+        'uzytkownik': uzytkownik,
         'historia_lista': historia_lista,
-        'query': request.GET.get('q', ''),})
+        'query': request.GET.get('q', ''),
+        'data_wyszukiwania': request.GET.get('data_wyszukiwania', ''),
+    })
 
 
 def ranking(request):
