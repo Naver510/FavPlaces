@@ -36,19 +36,42 @@
     </div>
 
     <div class="content">
-      <!-- Pasek wyszukiwania historii -->
-      <div class="his-search-bar">
-        <form class="his-search-form" method="get" action="{% url 'historia' %}">
-          <input type="text" name="q" placeholder="Szukaj w historii...">
-          <button type="submit">Szukaj</button>
-        </form>
-      </div>
+        <!-- Pasek wyszukiwania historii -->
+        <div class="his-search-bar">
+            <form class="his-search-form" method="get" action="{% url 'historia' %}">
+                <input type="text" name="q" placeholder="Szukaj w historii..." value="{{ q }}">
+                <button type="submit">Szukaj</button>
+            </form>
+        </div>
 
-      <div class="shadow-panel">
-        <h2>Twoja historia wyszukiwania</h2>
-        <p>Tutaj będą wyświetlane ostatnie wyszukiwane miejsca lub działania użytkownika.</p>
-      </div>
-      
-    </div>
-  </body>
+        {% if historia_lista %}
+        <ul class="historia-lista">
+            {% for wpis in historia_lista %}
+            <li class="miejsce-box">
+
+                <div class="miejsce-zdjecia">
+                    {% for zdjecie in wpis.ID_Miejsca.zdjęcia.all %}
+                    {% if zdjecie.URL %}
+                    <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
+                    {% else %}
+                    <p>Brak zdjęcia z URL</p>
+                    {% endif %}
+                    {% empty %}
+                    <p>Brak zdjęć dla tego miejsca.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="miejsce-info">
+                    <p><strong>Nazwa:</strong> {{ wpis.ID_Miejsca.Nazwa }}</p>
+                    <p><strong>Adres:</strong> {{ wpis.ID_Miejsca.Ulica }}, {{ wpis.ID_Miejsca.Kod_pocztowy }}, {{ wpis.ID_Miejsca.Miejscowość }}</p>
+                    <p><strong>Data:</strong> {{ wpis.Data_wyszukiwania|date:"d-m-Y H:i" }}</p>
+                </div>
+
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>Brak historii wyszukiwań do wyświetlenia.</p>
+        {% endif %}
+</body>
 </html>

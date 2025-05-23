@@ -1,10 +1,10 @@
 from django.db import models
 
 class HistoriaWyszukiwan(models.Model):
-    ID_Historii = models.AutoField(primary_key=True)
+    ID_Historii = models.AutoField(primary_key=True, db_column='ID_Historia')
     ID_Użytkownik = models.ForeignKey('Uzytkownik', db_column='ID_Użytkownik', on_delete=models.DO_NOTHING)
     Data_wyszukiwania = models.DateTimeField(auto_now_add=True)
-    ID_Miejsca = models.ForeignKey('Miejsce', db_column='ID_Miejsca', on_delete=models.DO_NOTHING)
+    ID_Miejsca = models.ForeignKey('Miejsce', db_column='ID_Miejsce', on_delete=models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -21,9 +21,11 @@ class Miejsce(models.Model):
     ID_Kategoria = models.ForeignKey('Kategoria', db_column='ID_Kategoria', on_delete=models.DO_NOTHING)
     ID_Użytkownik = models.ForeignKey('Uzytkownik', db_column='ID_Użytkownik', on_delete=models.DO_NOTHING)
     Nazwa = models.CharField(max_length=100)
-    Adres = models.CharField(max_length=100)
+    Ulica = models.CharField(max_length=100)
     Opis = models.CharField(max_length=100)
     Data_dodania = models.DateTimeField(auto_now_add=True)
+    Miejscowość = models.CharField(max_length=100)
+    Kod_pocztowy = models.CharField(max_length=6)
     """
     ID_Zdjęcie = models.ForeignKey('Zdjęcia', db_column='ID_Zdjęcie', on_delete=models.DO_NOTHING)"""
 

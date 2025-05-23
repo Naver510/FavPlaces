@@ -38,10 +38,12 @@ class LogowanieForm(forms.Form):
 class MiejsceForm(forms.ModelForm):
     class Meta:
         model = Miejsce
-        fields = ['Nazwa', 'Adres', 'ID_Kategoria', 'ID_Region', 'Opis']
+        fields = ['Nazwa', 'Ulica', 'Miejscowość', 'Kod_pocztowy', 'ID_Kategoria', 'ID_Region', 'Opis']
         widgets = {
             'Nazwa': forms.TextInput(attrs={'placeholder': 'Podaj nazwę'}),
-            'Adres': forms.TextInput(attrs={'placeholder': 'Podaj adres'}),
+            'Ulica': forms.TextInput(attrs={'placeholder': 'Podaj ulicę'}),
+            'Miejscowość': forms.TextInput(attrs={'placeholder': 'Podaj miejscowość'}),
+            'Kod_pocztowy': forms.TextInput(attrs={'placeholder': 'Podaj kod pocztowy'}),
             'ID_Kategoria': forms.Select(),
             'ID_Region': forms.Select(),
             'Opis': forms.Textarea(attrs={'placeholder': 'Dodaj opis...', 'rows': 4}),

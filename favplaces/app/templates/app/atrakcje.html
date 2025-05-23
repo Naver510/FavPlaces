@@ -66,7 +66,7 @@
 
             <div class="miejsce-info">
                 <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
-                <p><strong>Adres:</strong> {{ miejsce.Adres }} </p>
+                <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{miejsce.Kod_pocztowy}}, {{miejsce.Miejscowość}} </p>
                 <p>
                     <strong>Ocena:</strong> {{ miejsce.ocena }}/5
                     {% for i in "12345"|slice:":5" %}
