@@ -40,7 +40,8 @@
         <div class="his-search-bar">
             <form class="his-search-form" method="get" action="{% url 'historia' %}">
                 <input type="text" name="q" placeholder="Szukaj w historii..." value="{{ q }}">
-                <button type="submit">Szukaj</button>
+                <button type="submit" class="his-search-button">Szukaj</button>
+                <input type="date" name="data_wyszukiwania" class="calendar-picker" />                
             </form>
         </div>
 
@@ -49,15 +50,16 @@
             {% for wpis in historia_lista %}
             <li class="miejsce-box">
 
+                <div class = "shadow-panel">          
                 <div class="miejsce-zdjecia">
                     {% for zdjecie in wpis.ID_Miejsca.zdjęcia.all %}
                     {% if zdjecie.URL %}
-                    <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
+                    <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="250">
                     {% else %}
                     <p>Brak zdjęcia z URL</p>
                     {% endif %}
                     {% empty %}
-                    <p>Brak zdjęć dla tego miejsca.</p>
+                    <p>Brak zdjęć dla tej atrakcji.</p>
                     {% endfor %}
                 </div>
 
@@ -73,5 +75,6 @@
         {% else %}
         <p>Brak historii wyszukiwań do wyświetlenia.</p>
         {% endif %}
+        </div>
 </body>
 </html>

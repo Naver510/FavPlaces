@@ -21,7 +21,7 @@ body {
     width: 600px;  /* Szerokość paska wyszukiwania */
 }
 
-.his-search-form button {
+.his-search-button {
     padding: 10px 20px;
     background-color: #ffffff;
     color: #000000;
@@ -31,28 +31,41 @@ body {
     cursor: pointer;
 }
 
-.his-search-form button:hover {
+.his-search-button:hover {
     color: #f4b9b8;
+}
+
+.calendar-picker {
+  padding: 5px 10px;
+  border-radius: 25px;
+  border: 1px solid #000000;
+  margin-left: 0px;
+}
+
+.historia-lista {
+  list-style: none;      /* usuwa kropki */
+  padding-left: 0;       /* usuwa wcięcie listy */
+  margin-left: 0;        /* dodatkowo upewnia się, że nic nie zostaje */
 }
 
 .shadow-panel {
   background-color: #ffffff;
   border-radius: 20px;
+  border: 2px solid #000000;
   padding: 30px;
   margin: 40px auto;
-  max-width: 1500px;
-  height: 500px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  /*box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);*/
   text-align: center;
 }
 
 .shadow-panel h2 {
   margin-bottom: 15px;
   font-size: 24px;
-  color: #333;
+  color: #000000;
 }
 
 .shadow-panel p {
-  font-size: 18px;
-  color: #666;
+  font-size: 15px;
+  color: #000000;
 }
