@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.core.files.base import ContentFile
 from django.db.models import Q
 from datetime import datetime
+from django.core.paginator import Paginator
 
 def rejestracja(request):
     if request.method == 'POST':
@@ -44,17 +45,22 @@ def logowanie(request):
 
 
 def atrakcje(request):
-    query = request.GET.get('q', '')  # pobranie zapytania z paska wyszukiwania
-    sort = request.GET.get('sort', '')  # pobranie parametru sortowania
+    query = request.GET.get('q', '')
+    sort = request.GET.get('sort', '')
     miejsca = Miejsce.objects.all()
 
     if query:
         miejsca = miejsca.filter(Nazwa__icontains=query)
 
     if sort == 'asc':
-        miejsca = miejsca.order_by('Nazwa')  # sortowanie rosnąco
+        miejsca = miejsca.order_by('Nazwa')
     elif sort == 'desc':
-        miejsca = miejsca.order_by('-Nazwa')  # sortowanie malejąco
+        miejsca = miejsca.order_by('-Nazwa')
+
+    # PAGINACJA — 6 elementów na stronę
+    paginator = Paginator(miejsca, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
@@ -65,7 +71,7 @@ def atrakcje(request):
             del request.session['uzytkownik_id']
 
     context = {
-        'miejsca': miejsca,
+        'page_obj': page_obj,
         'uzytkownik': uzytkownik,
         'query': query,
     }
