@@ -229,8 +229,32 @@ def miejsce_szczegoly(request, id):
         'miejsce': miejsce,
         'uzytkownik': uzytkownik
     })
-    return render(request, 'app/miejsce_szczegoly.html', {'miejsce': miejsce})
 
 def miejsca_lista(request):
     miejsca = Miejsce.objects.prefetch_related('zdjęcia').all()
     return render(request, 'twoj_szablon.html', {'miejsca': miejsca})
+
+
+
+def dodaj_recenzje(request, miejsce_id):
+    if not request.session.get('uzytkownik_id'):
+        return redirect('logowanie')
+
+    miejsce = get_object_or_404(Miejsce, pk=miejsce_id)
+    uzytkownik = get_object_or_404(Uzytkownik, pk=request.session['uzytkownik_id'])
+
+    if request.method == 'POST':
+        ocena = request.POST.get('ocena')
+        komentarz = request.POST.get('Komentarz')
+
+        if ocena and ocena.isdigit():
+            recenzja = Recenzja()
+            recenzja.ID_Użytkownik = uzytkownik
+            recenzja.ID_Miejsce = miejsce
+            recenzja.Ocena = int(ocena)
+            recenzja.Komentarz = komentarz
+            recenzja.Data_dodania = timezone.now()
+            recenzja.save()
+            return redirect('atrakcje')
+
+    return render(request, 'app/dodaj_recenzje.html', {'miejsce': miejsce})

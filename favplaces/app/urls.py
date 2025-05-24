@@ -12,4 +12,5 @@ urlpatterns = [
     path('wyloguj/', views.wyloguj, name='wyloguj'),
     path('dodaj/', views.dodaj_miejsce, name='dodaj_miejsce'),
     path('miejsce/<int:id>/', views.miejsce_szczegoly, name='miejsce_szczegoly'),
+    path('dodaj_recenzje/<int:miejsce_id>/', views.dodaj_recenzje, name='dodaj_recenzje'),
 ]

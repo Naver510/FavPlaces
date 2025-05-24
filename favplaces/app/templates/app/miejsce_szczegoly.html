@@ -42,6 +42,7 @@
         <p><strong>Mapa:</strong> <a href="{{ miejsce.link_do_mapy }}" target="_blank">Google Maps</a></p>
         <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5</p>
         <a href="{% url 'strona_glowna' %}">← Wróć</a>
+        <a href="{% url 'dodaj_recenzje' miejsce.ID_Miejsce %}"><button>Dodaj recenzję</button></a>
     </div>
 </body>
 </html>
