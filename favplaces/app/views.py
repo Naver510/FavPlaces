@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .forms import RejestracjaForm, LogowanieForm, MiejsceForm
-from .models import Uzytkownik, Uprawnienia, Miejsce, Kategoria, Region, Zdjęcia, HistoriaWyszukiwan
+from .models import Uzytkownik, Uprawnienia, Miejsce, Kategoria, Region, Zdjęcia, HistoriaWyszukiwan, Recenzja
 from django.utils import timezone
 from django.core.files.base import ContentFile
 from django.db.models import Q
@@ -171,7 +171,8 @@ def dodaj_miejsce(request):
             
             # Obsługa URL zdjęcia
             url_zdjecia = request.POST.get('URL_zdjecia')
-            ocena = request.POST.get('ocena', 0)
+            ocena = request.POST.get('ocena')
+            
             
             if url_zdjecia:
                 # Zapisanie zdjęcia
@@ -181,6 +182,20 @@ def dodaj_miejsce(request):
                 zdjecie.ID_Recenzja = None
                 zdjecie.save()
             
+            # Sprawdź czy ocena została przekazana i jest liczbą
+            if ocena and ocena.isdigit():
+                # Konwersja oceny na liczbę całkowitą (ilość klikniętych gwiazdek)
+                ocena_int = int(ocena)
+                
+                # Zapisanie recenzji z oceną jako liczbą gwiazdek
+                recenzja = Recenzja()
+                recenzja.ID_Użytkownik = uzytkownik
+                recenzja.Ocena = ocena_int
+                recenzja.Komentarz = None 
+                recenzja.Data_dodania = timezone.now()
+                recenzja.ID_Miejsce = miejsce
+                recenzja.save()
+
             return redirect('atrakcje')
     else:
         form = MiejsceForm()

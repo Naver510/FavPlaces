@@ -63,10 +63,16 @@
                     const value = parseInt(star.getAttribute('data-value'));
                     star.textContent = value <= rating ? '★' : '☆';
                 });
+                console.log('Current rating:', rating);
             }
             
-            // Handle hover effects
+            // Add styling to make stars clickable
             stars.forEach(star => {
+                star.style.cursor = 'pointer';
+                star.style.fontSize = '24px';
+                star.style.color = '#FFD700'; // gold color for stars
+                
+                // Handle hover effects
                 star.addEventListener('mouseover', function() {
                     const value = parseInt(this.getAttribute('data-value'));
                     updateStars(value);
@@ -77,11 +83,17 @@
                 });
                 
                 // Handle click to set rating
-                star.addEventListener('click', function() {
+                star.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent form submission
                     const value = parseInt(this.getAttribute('data-value'));
                     currentRating = value;
                     ocenaInput.value = value;
                     updateStars(currentRating);
+                    
+                    // Debug output to console
+                    console.log('Star clicked! Rating set to:', value);
+                    console.log('Hidden input value:', ocenaInput.value);
+                    
                 });
             });
         });

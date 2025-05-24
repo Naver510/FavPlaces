@@ -42,7 +42,6 @@ class Recenzja(models.Model):
     Ocena = models.IntegerField()
     Komentarz = models.CharField(max_length=100)
     Data_dodania = models.DateTimeField(auto_now_add=True)
-    ID_Zdjęcie = models.ForeignKey('Zdjęcia', db_column='ID_Zdjęcie', on_delete=models.DO_NOTHING)
     ID_Miejsce = models.ForeignKey('Miejsce', db_column='ID_Miejsce', on_delete=models.DO_NOTHING)
 
     class Meta:
