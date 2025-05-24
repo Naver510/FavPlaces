@@ -35,69 +35,117 @@
         <a href="{% url 'ranking' %}">Ranking </a>
     </div>
 
-    <div class="content">
-        <div class="atrakcje-search-bar">
-            <form method="get" action="{% url 'atrakcje' %}" class="atrakcje-search-form">
-                <input type="text" name="q" placeholder="Szukaj miejsc..." value="{{ query }}">
-                <select name="sort" class="sort-dropdown" onchange="this.form.submit()">
-                    <option value="" {% if not request.GET.sort %}selected{% endif %}>Sortowanie</option>
-                    <option value="asc" {% if request.GET.sort == "asc" %}selected{% endif %}>Alfabetycznie ↑</option>
-                    <option value="desc" {% if request.GET.sort == "desc" %}selected{% endif %}>Alfabetycznie ↓</option>
-                </select>
-            </form>
+    <div class="content" style="display: flex; justify-content: space-between;">
+        <div style="flex-grow: 1;">
+            <div class="atrakcje-search-bar">
+                <form method="get" action="{% url 'atrakcje' %}" class="atrakcje-search-form">
+                    <input type="text" name="q" placeholder="Szukaj miejsc..." value="{{ query }}">
+                    <select name="sort" class="sort-dropdown" onchange="this.form.submit()">
+                        <option value="" {% if not request.GET.sort %}selected{% endif %}>Sortowanie</option>
+                        <option value="asc" {% if request.GET.sort == "asc" %}selected{% endif %}>Alfabetycznie ↑</option>
+                        <option value="desc" {% if request.GET.sort == "desc" %}selected{% endif %}>Alfabetycznie ↓</option>
+                    </select>
+                </form>
                 {% if uzytkownik %}
                     <a href="{% url 'dodaj_miejsce' %}">
                         <button class="add-place-button">Dodaj atrakcje</button>
                     </a>
                 {% endif %}
-            
-        </div>
+            </div>
 
-    
-        {% for miejsce in page_obj %}
-        <div class="miejsce-box">
-            {% for zdjecie in miejsce.zdjęcia.all %}
-            {% if zdjecie.URL %}
-            <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
-            {% else %}
-            <p>Brak zdjęcia z URL</p>
-            {% endif %}
+            {% for miejsce in page_obj %}
+            <div class="miejsce-box">
+                {% for zdjecie in miejsce.zdjęcia.all %}
+                {% if zdjecie.URL %}
+                <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
+                {% else %}
+                <p>Brak zdjęcia z URL</p>
+                {% endif %}
+                {% endfor %}
+
+                <div class="miejsce-info">
+                    <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
+                    <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
+                    <p>
+                        <strong>Ocena:</strong> {{ miejsce.ocena }}/5
+                        {% for i in "12345"|slice:":5" %}
+                        {% if forloop.counter <= miejsce.ocena %}
+                        ⭐
+                        {% else %}
+                        ☆
+                        {% endif %}
+                        {% endfor %}
+                    </p>
+                    <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}" class="wiecej-button">Więcej</a>
+                </div>
+            </div>
             {% endfor %}
 
-            <div class="miejsce-info">
-                <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
-                <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{miejsce.Kod_pocztowy}}, {{miejsce.Miejscowość}} </p>
-                <p>
-                    <strong>Ocena:</strong> {{ miejsce.ocena }}/5
-                    {% for i in "12345"|slice:":5" %}
-                    {% if forloop.counter <= miejsce.ocena %}
-                    ⭐
-                    {% else %}
-                    ☆
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page=1">⏮ Pierwsza</a>
+                        <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">◀ Poprzednia</a>
                     {% endif %}
-                    {% endfor %}
-                </p>
-                <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}" class="wiecej-button">Więcej</a>
+
+                    <span>Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}">Następna ▶</a>
+                        <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Ostatnia ⏭</a>
+                    {% endif %}
+                </span>
             </div>
         </div>
-        {% endfor %}
 
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page=1">⏮ Pierwsza</a>
-                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">◀ Poprzednia</a>
-                {% endif %}
-
-                <span>Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
-
-                {% if page_obj.has_next %}
-                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}">Następna ▶</a>
-                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Ostatnia ⏭</a>
-                {% endif %}
-            </span>
+        <div class="filters-sidebar" style="width: 300px; margin-left: 20px;">
+            <h3>Filtrowanie</h3>
+            <form method="get" action="{% url 'atrakcje' %}">
+                <div class="filter-section">
+                    <button type="button" class="filter-toggle" onclick="toggleFilter('region')">Region</button>
+                    <div id="region" class="filter-options" style="display: none; flex-direction: column;">
+                        {% for region in regions %}
+                        <label style="display: block;">
+                            <input type="checkbox" name="region" value="{{ region.ID_Regionu }}" {% if region.ID_Regionu|stringformat:"s" in request.GET.region %}checked{% endif %}>
+                            {{ region.Nazwa }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <button type="button" class="filter-toggle" onclick="toggleFilter('category')">Kategoria</button>
+                    <div id="category" class="filter-options" style="display: none; flex-direction: column;">
+                        {% for category in categories %}
+                        <label style="display: block;">
+                            <input type="checkbox" name="category" value="{{ category.ID_Kategoria }}" {% if category.ID_Kategoria|stringformat:"s" in request.GET.category %}checked{% endif %}>
+                            {{ category.Nazwa }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <button type="button" class="filter-toggle" onclick="toggleFilter('rating')">Oceny</button>
+                    <div id="rating" class="filter-options" style="display: none; flex-direction: column;">
+                        <label style="display: block;"><input type="checkbox" name="rating" value="5" {% if "5" in request.GET.rating %}checked{% endif %}> 5 gwiazdek</label>
+                        <label style="display: block;"><input type="checkbox" name="rating" value="4" {% if "4" in request.GET.rating %}checked{% endif %}> 4 gwiazdki</label>
+                        <label style="display: block;"><input type="checkbox" name="rating" value="3" {% if "3" in request.GET.rating %}checked{% endif %}> 3 gwiazdki</label>
+                        <label style="display: block;"><input type="checkbox" name="rating" value="2" {% if "2" in request.GET.rating %}checked{% endif %}> 2 gwiazdki</label>
+                        <label style="display: block;"><input type="checkbox" name="rating" value="1" {% if "1" in request.GET.rating %}checked{% endif %}> 1 gwiazdka</label>
+                    </div>
+                </div>
+                <button type="submit" class="apply-filters-button">Zastosuj filtry</button>
+            </form>
+            <form method="get" action="{% url 'atrakcje' %}">
+                <button type="submit" class="reset-filters-button" style="margin-top: 10px;">Resetuj filtry</button>
+            </form>
         </div>
-
     </div>
+
+    <script>
+        function toggleFilter(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 </body>
 </html>

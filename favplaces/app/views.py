@@ -47,10 +47,23 @@ def logowanie(request):
 def atrakcje(request):
     query = request.GET.get('q', '')
     sort = request.GET.get('sort', '')
+    selected_regions = [region for region in request.GET.getlist('region') if region]
+    selected_categories = [category for category in request.GET.getlist('category') if category]
+    selected_ratings = [rating for rating in request.GET.getlist('rating') if rating]
+
     miejsca = Miejsce.objects.all()
 
     if query:
         miejsca = miejsca.filter(Nazwa__icontains=query)
+
+    if selected_regions:
+        miejsca = miejsca.filter(ID_Region__in=selected_regions)
+
+    if selected_categories:
+        miejsca = miejsca.filter(ID_Kategoria__in=selected_categories)  # Allow multiple categories
+
+    if selected_ratings:
+        miejsca = miejsca.filter(recenzja__Ocena__in=selected_ratings)
 
     if sort == 'asc':
         miejsca = miejsca.order_by('Nazwa')
@@ -70,10 +83,15 @@ def atrakcje(request):
         except Uzytkownik.DoesNotExist:
             del request.session['uzytkownik_id']
 
+    regions = Region.objects.all()
+    categories = Kategoria.objects.all()
+
     context = {
         'page_obj': page_obj,
         'uzytkownik': uzytkownik,
         'query': query,
+        'regions': regions,
+        'categories': categories,
     }
 
     return render(request, 'app/atrakcje.html', context)
