@@ -58,11 +58,38 @@ textarea {
 .rating {
     margin: 20px 0;
     font-size: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.rating label {
+    margin-right: 10px;
+}
+
+.stars-container {
+    display: inline-flex;
+}
+
+.star {
+    color: #ffaf02;
+    font-size: 24px;
+    transition: color 0.2s;
+    cursor: default;
+}
+
+.star:hover {
+    color: #ffaf02;
 }
 
 .full-width {
     flex: 1 1 100%;
     margin-top: 10px;
+}
+
+.full-width textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 100px;
 }
 
 button,
@@ -81,5 +108,12 @@ a.button-link {
     color: black;
     text-decoration: none;
     border: 1px solid black;
+}
+
+.or-separator {
+    text-align: center;
+    margin: 10px 0;
+    color: #a89bb5;
+    font-style: italic;
 }
 

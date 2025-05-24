@@ -44,7 +44,12 @@ class MiejsceForm(forms.ModelForm):
             'Ulica': forms.TextInput(attrs={'placeholder': 'Podaj ulicę'}),
             'Miejscowość': forms.TextInput(attrs={'placeholder': 'Podaj miejscowość'}),
             'Kod_pocztowy': forms.TextInput(attrs={'placeholder': 'Podaj kod pocztowy'}),
-            'ID_Kategoria': forms.Select(),
-            'ID_Region': forms.Select(),
+            'ID_Kategoria': forms.Select(attrs={'placeholder': 'Wybierz kategorię'}),
+            'ID_Region': forms.Select(attrs={'placeholder': 'Wybierz region'}),
             'Opis': forms.Textarea(attrs={'placeholder': 'Dodaj opis...', 'rows': 4}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['ID_Kategoria'].empty_label = "Wybierz kategorię"
+        self.fields['ID_Region'].empty_label = "Wybierz region"

@@ -16,22 +16,33 @@
         <form method="post" class="form-container">
             {% csrf_token %}
             <div class="left-form">
-                {{ form.Nazwa }}
-                {{ form.Adres }}
-                {{ form.ID_Kategoria }}
+                <input type="text" name="Nazwa" maxlength="100" placeholder="Podaj nazwę" required id="id_Nazwa">
                 {{ form.ID_Region }}
+                <input type="text" name="Miejscowość" maxlength="100" placeholder="Podaj miejscowość" required id="id_Miejscowość">
+                <input type="text" name="Kod_pocztowy" maxlength="6" placeholder="Podaj kod pocztowy" required id="id_Kod_pocztowy">
+                <input type="text" name="Ulica" maxlength="100" placeholder="Podaj ulicę" required id="id_Ulica">
+                {{ form.ID_Kategoria }}
             </div>
             <div class="right-form">
                 <div class="upload-box">
                     <span>+ dodaj zdjęcie</span>
                 </div>
+                <div class="or-separator">lub</div>
+                <input type="text" name="URL_zdjecia" maxlength="255" placeholder="Dodaj link do zdjęcia" id="id_URL_zdjecia">
             </div>
             <div class="rating">
                 <label>Ocena:</label>
-                <span>★ ☆ ☆ ☆ ☆</span> <!-- Statycznie na razie -->
+                <div class="stars-container">
+                    <input type="hidden" name="ocena" id="ocena" value="0">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
             </div>
             <div class="full-width">
-                {{ form.Opis }}
+                <textarea name="Opis" cols="40" rows="4" maxlength="500" placeholder="Dodaj opis..." id="id_Opis"></textarea>
             </div>
             <div class="full-width">
                 <button type="submit">Dodaj</button>
@@ -40,6 +51,41 @@
         </form>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+            const ocenaInput = document.getElementById('ocena');
+            let currentRating = 0;
+            
+            // Function to update stars display
+            function updateStars(rating) {
+                stars.forEach(star => {
+                    const value = parseInt(star.getAttribute('data-value'));
+                    star.textContent = value <= rating ? '★' : '☆';
+                });
+            }
+            
+            // Handle hover effects
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    updateStars(value);
+                });
+                
+                star.addEventListener('mouseout', function() {
+                    updateStars(currentRating);
+                });
+                
+                // Handle click to set rating
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    currentRating = value;
+                    ocenaInput.value = value;
+                    updateStars(currentRating);
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

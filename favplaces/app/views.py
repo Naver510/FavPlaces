@@ -158,17 +158,29 @@ def dodaj_miejsce(request):
         except Uzytkownik.DoesNotExist:
             request.session.flush()
             return redirect('logowanie')
+            
     if request.method == 'POST':
         form = MiejsceForm(request.POST)
 
         if form.is_valid():
+            # Zapisanie miejsca
             miejsce = form.save(commit=False)
-            uzytkownik_id = request.session.get('uzytkownik_id')
-            miejsce.ID_Użytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
-            miejsce.ID_Miejsce = Miejsce.objects.count() + 1
+            miejsce.ID_Użytkownik = uzytkownik
             miejsce.Data_dodania = timezone.now()
-
             miejsce.save()
+            
+            # Obsługa URL zdjęcia
+            url_zdjecia = request.POST.get('URL_zdjecia')
+            ocena = request.POST.get('ocena', 0)
+            
+            if url_zdjecia:
+                # Zapisanie zdjęcia
+                zdjecie = Zdjęcia()
+                zdjecie.ID_Miejsce = miejsce
+                zdjecie.URL = url_zdjecia
+                zdjecie.ID_Recenzja = None
+                zdjecie.save()
+            
             return redirect('atrakcje')
     else:
         form = MiejsceForm()
