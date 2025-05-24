@@ -21,6 +21,7 @@ h1 {
     border-radius: 30px;
     border: 2px solid #000000;
     /*box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);*/
+    gap: 10px;
 }
 
 .left-form,
