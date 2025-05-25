@@ -51,7 +51,7 @@ a, a:hover, a:visited{
     padding: 20px 20px;
     display: flex;
     justify-content: center;
-    gap: 300px;
+    gap: 15%;
     border: none;
 }
 

@@ -8,11 +8,12 @@ h1 {
 
 .ranking-box {
   max-width: 1500px;
-  margin: 40px auto;
+  margin: 20px;
   background-color: #fff;
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  border: 2px solid black;
 }
 
 .ranking-item {

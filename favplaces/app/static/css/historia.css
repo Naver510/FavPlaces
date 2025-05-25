@@ -18,7 +18,8 @@ body {
     border-radius: 30px;
     border: 1px solid #000000;
     font-size: 30px;
-    width: 600px;  /* Szerokość paska wyszukiwania */
+    max-width: 600px;
+    width: 80%;
 }
 
 .his-search-button {
