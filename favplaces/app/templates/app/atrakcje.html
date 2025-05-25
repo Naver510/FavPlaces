@@ -4,10 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Atrakcje</title>
-
-    <!--basic css template-->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
     <link rel="stylesheet" href="{% static 'css/atrakcje.css' %}">
 </head>
 <body>
@@ -15,7 +12,6 @@
         <a href="{% url 'strona_glowna' %}">
             <div><strong>FavPlaces</strong></div>
         </a>
-
         <div style="display: flex; align-items: center;">
             {% if uzytkownik %}
                 <div class="user-info">{{ uzytkownik.Imie }} {{ uzytkownik.Nazwisko }}</div>
@@ -51,24 +47,70 @@
                         <button class="add-place-button">Dodaj atrakcje</button>
                     </a>
                 {% endif %}
+                <button id="open-filters" class="add-place-button">Filtruj</button>
             </div>
+
+            <!-- Panel filtrowania -->
+            <div id="filters-panel" class="filters-offcanvas">
+                <div class="filters-header">
+                    <h2>Filtry</h2>
+                    <button id="close-filters">&times;</button>
+                </div>
+                <form method="get" action="{% url 'atrakcje' %}" class="filters-form-panel">
+                    <label>Region:</label>
+                    <select name="region">
+                        <option value="">Wszystkie</option>
+                        {% for region in regions %}
+                            <option value="{{ region.ID_Regionu }}" {% if region.ID_Regionu|stringformat:"s" in request.GET.region %}selected{% endif %}>
+                                {{ region.Nazwa }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label>Kategoria:</label>
+                    <select name="category">
+                        <option value="">Wszystkie</option>
+                        {% for category in categories %}
+                            <option value="{{ category.ID_Kategoria }}" {% if category.ID_Kategoria|stringformat:"s" in request.GET.category %}selected{% endif %}>
+                                {{ category.Nazwa }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label>Ocena:</label>
+                    <select name="rating">
+                        <option value="">Dowolna</option>
+                        <option value="5">5 ⭐</option>
+                        <option value="4">4 ⭐</option>
+                        <option value="3">3 ⭐</option>
+                        <option value="2">2 ⭐</option>
+                        <option value="1">1 ⭐</option>
+                    </select>
+
+                    <div class="filters-buttons">
+                        <button type="submit" class="apply-button">Zastosuj</button>
+                        <a href="{% url 'atrakcje' %}" class="reset-button">Resetuj</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Overlay -->
+            <div id="filters-overlay" class="filters-overlay"></div>
 
             {% for miejsce in page_obj %}
             <div class="miejsce-box">
                 {% for zdjecie in miejsce.zdjęcia.all %}
-                {% if zdjecie.URL %}
-                <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
-                {% else %}
-                <p>Brak zdjęcia z URL</p>
-                {% endif %}
+                    {% if zdjecie.URL %}
+                        <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
+                    {% else %}
+                        <p>Brak zdjęcia z URL</p>
+                    {% endif %}
                 {% endfor %}
 
                 <div class="miejsce-info">
                     <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
                     <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
-                    <p>
-                        <strong>Ocena:</strong> {{ miejsce.ocena }}/5 ⭐
-                    </p>
+                    <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5 ⭐</p>
                     <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}?page={{ page_obj.number }}" class="wiecej-button">Więcej</a>
                 </div>
             </div>
@@ -80,9 +122,7 @@
                         <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page=1">⏮ Pierwsza</a>
                         <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">◀ Poprzednia</a>
                     {% endif %}
-
                     <span>Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
-
                     {% if page_obj.has_next %}
                         <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}">Następna ▶</a>
                         <a href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Ostatnia ⏭</a>
@@ -90,55 +130,26 @@
                 </span>
             </div>
         </div>
-
-        <div class="filters-sidebar" style="width: 300px; margin-left: 20px;">
-            <h3>Filtrowanie</h3>
-            <form method="get" action="{% url 'atrakcje' %}">
-                <div class="filter-section">
-                    <button type="button" class="filter-toggle" onclick="toggleFilter('region')">Region</button>
-                    <div id="region" class="filter-options" style="display: none; flex-direction: column;">
-                        {% for region in regions %}
-                        <label style="display: block;">
-                            <input type="checkbox" name="region" value="{{ region.ID_Regionu }}" {% if region.ID_Regionu|stringformat:"s" in request.GET.region %}checked{% endif %}>
-                            {{ region.Nazwa }}
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="filter-section">
-                    <button type="button" class="filter-toggle" onclick="toggleFilter('category')">Kategoria</button>
-                    <div id="category" class="filter-options" style="display: none; flex-direction: column;">
-                        {% for category in categories %}
-                        <label style="display: block;">
-                            <input type="checkbox" name="category" value="{{ category.ID_Kategoria }}" {% if category.ID_Kategoria|stringformat:"s" in request.GET.category %}checked{% endif %}>
-                            {{ category.Nazwa }}
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="filter-section">
-                    <button type="button" class="filter-toggle" onclick="toggleFilter('rating')">Oceny</button>
-                    <div id="rating" class="filter-options" style="display: none; flex-direction: column;">
-                        <label style="display: block;"><input type="checkbox" name="rating" value="5" {% if "5" in request.GET.rating %}checked{% endif %}> 5 gwiazdek</label>
-                        <label style="display: block;"><input type="checkbox" name="rating" value="4" {% if "4" in request.GET.rating %}checked{% endif %}> 4 gwiazdki</label>
-                        <label style="display: block;"><input type="checkbox" name="rating" value="3" {% if "3" in request.GET.rating %}checked{% endif %}> 3 gwiazdki</label>
-                        <label style="display: block;"><input type="checkbox" name="rating" value="2" {% if "2" in request.GET.rating %}checked{% endif %}> 2 gwiazdki</label>
-                        <label style="display: block;"><input type="checkbox" name="rating" value="1" {% if "1" in request.GET.rating %}checked{% endif %}> 1 gwiazdka</label>
-                    </div>
-                </div>
-                <button type="submit" class="apply-filters-button">Zastosuj filtry</button>
-            </form>
-            <form method="get" action="{% url 'atrakcje' %}">
-                <button type="submit" class="reset-filters-button" style="margin-top: 10px;">Resetuj filtry</button>
-            </form>
-        </div>
     </div>
 
     <script>
-        function toggleFilter(sectionId) {
-            const section = document.getElementById(sectionId);
-            section.style.display = section.style.display === 'none' ? 'block' : 'none';
-        }
+        const panel = document.getElementById('filters-panel');
+        const overlay = document.getElementById('filters-overlay');
+
+        document.getElementById('open-filters').addEventListener('click', function () {
+            panel.classList.add('show');
+            overlay.classList.add('show');
+        });
+
+        document.getElementById('close-filters').addEventListener('click', function () {
+            panel.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        overlay.addEventListener('click', function () {
+            panel.classList.remove('show');
+            overlay.classList.remove('show');
+        });
     </script>
 </body>
 </html>
