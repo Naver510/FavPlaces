@@ -38,7 +38,7 @@ class LogowanieForm(forms.Form):
 class MiejsceForm(forms.ModelForm):
     class Meta:
         model = Miejsce
-        fields = ['Nazwa', 'Ulica', 'Miejscowość', 'Kod_pocztowy', 'ID_Kategoria', 'ID_Region', 'Opis']
+        fields = ['Nazwa', 'Ulica', 'Miejscowość', 'Kod_pocztowy', 'ID_Kategoria', 'ID_Region', 'Opis', 'Link']
         widgets = {
             'Nazwa': forms.TextInput(attrs={'placeholder': 'Podaj nazwę'}),
             'Ulica': forms.TextInput(attrs={'placeholder': 'Podaj ulicę'}),
@@ -47,9 +47,12 @@ class MiejsceForm(forms.ModelForm):
             'ID_Kategoria': forms.Select(attrs={'placeholder': 'Wybierz kategorię'}),
             'ID_Region': forms.Select(attrs={'placeholder': 'Wybierz region'}),
             'Opis': forms.Textarea(attrs={'placeholder': 'Dodaj opis...', 'rows': 4}),
+            'Link': forms.URLInput(attrs={'placeholder': 'Link do strony atrakcji (opcjonalne)', 'required': False}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['ID_Kategoria'].empty_label = "Wybierz kategorię"
         self.fields['ID_Region'].empty_label = "Wybierz region"
+        # Make Link field optional
+        self.fields['Link'].required = False

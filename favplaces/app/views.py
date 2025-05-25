@@ -192,40 +192,54 @@ def dodaj_miejsce(request):
         form = MiejsceForm(request.POST)
 
         if form.is_valid():
-            # Zapisanie miejsca
-            miejsce = form.save(commit=False)
-            miejsce.ID_Użytkownik = uzytkownik
-            miejsce.Data_dodania = timezone.now()
-            miejsce.save()
-            
-            # Obsługa URL zdjęcia
-            url_zdjecia = request.POST.get('URL_zdjecia')
-            ocena = request.POST.get('ocena')
-            
-            
-            if url_zdjecia:
-                # Zapisanie zdjęcia
-                zdjecie = Zdjęcia()
-                zdjecie.ID_Miejsce = miejsce
-                zdjecie.URL = url_zdjecia
-                zdjecie.ID_Recenzja = None
-                zdjecie.save()
-            
-            # Sprawdź czy ocena została przekazana i jest liczbą
-            if ocena and ocena.isdigit():
-                # Konwersja oceny na liczbę całkowitą (ilość klikniętych gwiazdek)
-                ocena_int = int(ocena)
+            try:
+                # Zapisanie miejsca
+                miejsce = form.save(commit=False)
+                miejsce.ID_Użytkownik = uzytkownik
+                miejsce.Data_dodania = timezone.now()
                 
-                # Zapisanie recenzji z oceną jako liczbą gwiazdek
-                recenzja = Recenzja()
-                recenzja.ID_Użytkownik = uzytkownik
-                recenzja.Ocena = ocena_int
-                recenzja.Komentarz = None 
-                recenzja.Data_dodania = timezone.now()
-                recenzja.ID_Miejsce = miejsce
-                recenzja.save()
+                # Dodaj obsługę linku do Google Maps
+                maps_link = request.POST.get('maps_link')
+                if maps_link:
+                    miejsce.Link = maps_link
+                    
+                miejsce.save()
+                print(f"Miejsce zapisane: ID={miejsce.ID_Miejsce}")
+                
+                # Obsługa URL zdjęcia
+                url_zdjecia = request.POST.get('URL_zdjecia')
+                ocena = request.POST.get('ocena')
+                
+                
+                if url_zdjecia:
+                    # Zapisanie zdjęcia
+                    zdjecie = Zdjęcia()
+                    zdjecie.ID_Miejsce = miejsce
+                    zdjecie.URL = url_zdjecia
+                    zdjecie.ID_Recenzja = None
+                    zdjecie.save()
+                
+                # Sprawdź czy ocena została przekazana i jest liczbą
+                if ocena and ocena.isdigit():
+                    # Konwersja oceny na liczbę całkowitą (ilość klikniętych gwiazdek)
+                    ocena_int = int(ocena)
+                    
+                    # Zapisanie recenzji z oceną jako liczbą gwiazdek
+                    recenzja = Recenzja()
+                    recenzja.ID_Użytkownik = uzytkownik
+                    recenzja.Ocena = ocena_int
+                    recenzja.Komentarz = None 
+                    recenzja.Data_dodania = timezone.now()
+                    recenzja.ID_Miejsce = miejsce
+                    recenzja.save()
 
-            return redirect('atrakcje')
+                return redirect('atrakcje')
+            except Exception as e:
+                print(f"Błąd podczas zapisywania miejsca: {e}")
+                # Możesz dodać błąd do formularza
+                form.add_error(None, f"Błąd podczas zapisywania: {e}")
+        else:
+            print("Formularz nieprawidłowy:", form.errors)
     else:
         form = MiejsceForm()
 

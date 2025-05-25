@@ -26,6 +26,7 @@ class Miejsce(models.Model):
     Data_dodania = models.DateTimeField(auto_now_add=True)
     Miejscowość = models.CharField(max_length=100)
     Kod_pocztowy = models.CharField(max_length=6)
+    Link = models.CharField(max_length=255)  # Link do strony internetowej
     """
     ID_Zdjęcie = models.ForeignKey('Zdjęcia', db_column='ID_Zdjęcie', on_delete=models.DO_NOTHING)"""
 
