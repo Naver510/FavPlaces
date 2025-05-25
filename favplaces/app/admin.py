@@ -13,3 +13,4 @@ class RankingAdmin(admin.ModelAdmin):
     list_display = ('Nazwa', 'Data_utworzenia')
     search_fields = ('Nazwa',)
     filter_horizontal = ('Miejsca',)  # Allows selecting multiple places
+    ordering = ('-Data_utworzenia',)

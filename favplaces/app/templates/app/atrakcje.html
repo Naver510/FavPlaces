@@ -40,6 +40,8 @@
                         <option value="" {% if not request.GET.sort %}selected{% endif %}>Sortowanie</option>
                         <option value="asc" {% if request.GET.sort == "asc" %}selected{% endif %}>Alfabetycznie ↑</option>
                         <option value="desc" {% if request.GET.sort == "desc" %}selected{% endif %}>Alfabetycznie ↓</option>
+                        <option value="rating_asc" {% if request.GET.sort == "rating_asc" %}selected{% endif %}>Oceny ↑</option>
+                        <option value="rating_desc" {% if request.GET.sort == "rating_desc" %}selected{% endif %}>Oceny ↓</option>
                     </select>
                 </form>
                 {% if uzytkownik %}
