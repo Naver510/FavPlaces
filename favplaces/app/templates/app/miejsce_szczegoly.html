@@ -37,12 +37,54 @@
 
     <div class="content">
         <h2>{{ miejsce.nazwa }}</h2>
-        <img src="{{ miejsce.zdjecie.url }}" style="max-width: 300px;">
-        <p><strong>Adres:</strong> {{ miejsce.adres }}</p>
+
+    <div class="miejsce-info">
+
+        {% for zdjecie in miejsce.zdjęcia.all %}
+                {% if zdjecie.URL %}
+                <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
+                {% else %}
+                <p>Brak zdjęcia z URL</p>
+                {% endif %}
+        {% endfor %}
+
+        <img src="{{ miejsce.zdjecie.url }}" style="max-width: 300px; border-radius: 10px;">
+        <p><strong>Nazwa:</strong>{{miejsce.Nazwa}}</p>
+        <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
         <p><strong>Mapa:</strong> <a href="{{ miejsce.link_do_mapy }}" target="_blank">Google Maps</a></p>
-        <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5</p>
-        <a href="{% url 'strona_glowna' %}">← Wróć</a>
-        <a href="{% url 'dodaj_recenzje' miejsce.ID_Miejsce %}"><button>Dodaj recenzję</button></a>
+        <p><strong>Ocena:</strong> {{ srednia_ocena|floatformat:1 }}/5</p>
+        <p><strong>Opis:</strong>{{miejsce.Opis}}</p>
     </div>
+
+    <div class="przyciski" style="margin: 20px 0;">
+        <a href="{% url 'atrakcje' %}?page={{ page }}">← Wróć</a>
+        <a href="{% url 'dodaj_recenzje' miejsce.ID_Miejsce %}">
+            <button>Dodaj recenzję</button>
+        </a>
+    </div>
+
+    <hr>
+
+    <div class="recenzje">
+        <h3>Recenzje użytkowników</h3>
+        {% if recenzje %}
+            <ul style="list-style: none; padding-left: 0;">
+                {% for rec in recenzje %}
+                    <li style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                        <p><strong>{{ rec.ID_Użytkownik.Imie }} {{ rec.ID_Użytkownik.Nazwisko }}</strong> — 
+                           <em>{{ rec.Data_dodania|date:"d.m.Y" }}</em></p>
+                        <p><strong>Ocena:</strong> {{ rec.Ocena }} / 5</p>
+                        <p><strong>Komentarz:</strong> {{ rec.Komentarz|default:"Brak komentarza" }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Brak recenzji dla tego miejsca.</p>
+        {% endif %}
+    </div>
+</div>
+
+
+
 </body>
 </html>

@@ -76,7 +76,7 @@
                         {% endif %}
                         {% endfor %}
                     </p>
-                    <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}" class="wiecej-button">Więcej</a>
+                    <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}?page={{ page_obj.number }}" class="wiecej-button">Więcej</a>
                 </div>
             </div>
             {% endfor %}

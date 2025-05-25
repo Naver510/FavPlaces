@@ -9,6 +9,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 import os
 from django.conf import settings
+from django.db.models import Avg
 
 def rejestracja(request):
     if request.method == 'POST':
@@ -278,6 +279,7 @@ def dodaj_miejsce(request):
 
 def miejsce_szczegoly(request, id):
     miejsce = get_object_or_404(Miejsce, pk=id)
+    page = request.GET.get('page', '1')
 
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
@@ -286,13 +288,22 @@ def miejsce_szczegoly(request, id):
             uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
             HistoriaWyszukiwan.objects.create(
                 ID_Użytkownik=uzytkownik,
-                ID_Miejsca=miejsce)
+                ID_Miejsca=miejsce
+            )
         except Uzytkownik.DoesNotExist:
             request.session.flush()
 
+    recenzje = Recenzja.objects.filter(ID_Miejsce=miejsce).select_related('ID_Użytkownik')
+    srednia_ocena = recenzje.aggregate(Avg('Ocena'))['Ocena__avg']
+    zdjecia_miejsca = Zdjęcia.objects.filter(ID_Miejsce=miejsce, URL__isnull=False).exclude(URL='')
+
     return render(request, 'app/miejsce_szczegoly.html', {
         'miejsce': miejsce,
-        'uzytkownik': uzytkownik
+        'uzytkownik': uzytkownik,
+        'recenzje': recenzje,
+        'srednia_ocena': srednia_ocena or 0,
+        'zdjecia_miejsca': zdjecia_miejsca,
+        'page': page
     })
 
 def miejsca_lista(request):
@@ -320,6 +331,6 @@ def dodaj_recenzje(request, miejsce_id):
             recenzja.Komentarz = komentarz
             recenzja.Data_dodania = timezone.now()
             recenzja.save()
-            return redirect('atrakcje')
+            return redirect('miejsce_szczegoly', id=miejsce_id)
 
     return render(request, 'app/dodaj_recenzje.html', {'miejsce': miejsce})
