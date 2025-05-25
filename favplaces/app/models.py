@@ -32,9 +32,11 @@ class Miejsce(models.Model):
     class Meta:
         managed = False
         db_table = 'Miejsce'  
+        verbose_name = 'Miejsce'  # Singular name
+        verbose_name_plural = 'Miejsca'  # Plural name
 
     def __str__(self):
-        return self.nazwa
+        return self.Nazwa  # Corrected attribute name
 
 class Recenzja(models.Model):
     ID_Recenzja = models.AutoField(primary_key=True)
@@ -86,7 +88,7 @@ class Uzytkownik(models.Model):
         db_table = 'Użytkownik'  
 
     def __str__(self):
-        return f"{self.imie} {self.nazwisko}"
+        return f"{self.Imie} {self.Nazwisko}"  # Corrected attribute names
     
 class Zdjęcia(models.Model):
     ID_Zdjęcie = models.AutoField(primary_key=True)
@@ -111,6 +113,22 @@ class Kategoria(models.Model):
     class Meta:
         managed = False
         db_table = 'Kategoria'  
+
+    def __str__(self):
+        return self.Nazwa
+
+class Ranking(models.Model):
+    ID_Ranking = models.AutoField(primary_key=True)
+    Nazwa = models.CharField(max_length=100)
+    Opis = models.TextField(null=True, blank=True)
+    Data_utworzenia = models.DateTimeField(auto_now_add=True)
+    Miejsca = models.ManyToManyField('Miejsce', related_name='rankingi')
+
+    class Meta:
+        managed = True  # Ensure Django manages this table
+        db_table = 'Ranking'
+        verbose_name = 'Ranking'
+        verbose_name_plural = 'Rankingi'
 
     def __str__(self):
         return self.Nazwa

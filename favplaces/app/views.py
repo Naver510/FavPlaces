@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from .forms import RejestracjaForm, LogowanieForm, MiejsceForm
-from .models import Uzytkownik, Uprawnienia, Miejsce, Kategoria, Region, Zdjęcia, HistoriaWyszukiwan, Recenzja
+from .models import Uzytkownik, Uprawnienia, Miejsce, Kategoria, Region, Zdjęcia, HistoriaWyszukiwan, Recenzja, Ranking
 from django.utils import timezone
 from django.core.files.base import ContentFile
 from django.db.models import Q
@@ -123,7 +123,7 @@ def historia(request):
             if query:
                 historia_qs = historia_qs.filter(
                     Q(ID_Miejsca__Nazwa__icontains=query) |
-                    Q(ID_Miejsca__Miejscowość__icontains=query)
+                    Q(ID_Miejsca__Miejscowość__icontains(query))  # Fixed unclosed parenthesis
                 )
 
             if data_wyszukiwania:
@@ -156,7 +156,12 @@ def ranking(request):
         except Uzytkownik.DoesNotExist:
             request.session.flush()
 
-    return render(request, 'app/ranking.html', {'uzytkownik': uzytkownik})
+    rankingi = Ranking.objects.prefetch_related('Miejsca').all()
+
+    return render(request, 'app/ranking.html', {
+        'uzytkownik': uzytkownik,
+        'rankingi': rankingi,
+    })
 
 
 

@@ -37,19 +37,20 @@
     </div>
 
     <div class="content">
-      <h1>Najchętniej odwiedzane miejsca w miesiącu!</h1>
+      <h1>Rankingi</h1>
+      {% for ranking in rankingi %}
       <div class="ranking-box">
-        {% for atrakcja in top5 %}
-        <div class="ranking-item">
-          <div class="ranking-position">#{{ forloop.counter }}</div>
-          <div class="ranking-details">
-            <h3>{{ atrakcja.Nazwa }}</h3>
-            <p>Średnia ocena: {{ atrakcja.srednia_ocena|floatformat:1 }}/5</p>
-            <p>Lokalizacja: {{ atrakcja.Adres }}</p>
-          </div>
-        </div>
-        {% endfor %}
+        <h2>{{ ranking.Nazwa }}</h2>
+        <p>{{ ranking.Opis }}</p>
+        <ul>
+          {% for miejsce in ranking.Miejsca.all %}
+          <li>
+            <strong>{{ miejsce.Nazwa }}</strong> - {{ miejsce.Miejscowość }}, {{ miejsce.Ulica }}
+          </li>
+          {% endfor %}
+        </ul>
       </div>
+      {% endfor %}
     </div>
   </body>
 </html>
