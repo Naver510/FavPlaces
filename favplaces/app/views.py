@@ -4,12 +4,12 @@ from .forms import RejestracjaForm, LogowanieForm, MiejsceForm
 from .models import Uzytkownik, Uprawnienia, Miejsce, Kategoria, Region, Zdjęcia, HistoriaWyszukiwan, Recenzja, Ranking
 from django.utils import timezone
 from django.core.files.base import ContentFile
-from django.db.models import Q
+from django.db.models import Q, Avg
 from datetime import datetime
 from django.core.paginator import Paginator
 import os
 from django.conf import settings
-from django.db.models import Avg
+
 
 def rejestracja(request):
     if request.method == 'POST':

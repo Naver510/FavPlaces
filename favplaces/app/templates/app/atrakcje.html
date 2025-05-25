@@ -67,14 +67,7 @@
                     <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
                     <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
                     <p>
-                        <strong>Ocena:</strong> {{ miejsce.ocena }}/5
-                        {% for i in "12345"|slice:":5" %}
-                        {% if forloop.counter <= miejsce.ocena %}
-                        ⭐
-                        {% else %}
-                        ☆
-                        {% endif %}
-                        {% endfor %}
+                        <strong>Ocena:</strong> {{ miejsce.ocena }}/5 ⭐
                     </p>
                     <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}?page={{ page_obj.number }}" class="wiecej-button">Więcej</a>
                 </div>

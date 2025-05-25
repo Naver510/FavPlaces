@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Avg
+from decimal import Decimal, ROUND_HALF_UP
 
 class HistoriaWyszukiwan(models.Model):
     ID_Historii = models.AutoField(primary_key=True, db_column='ID_Historia')
@@ -35,6 +37,17 @@ class Miejsce(models.Model):
         db_table = 'Miejsce'  
         verbose_name = 'Miejsce'  # Singular name
         verbose_name_plural = 'Miejsca'  # Plural name
+    
+    @property
+    def ocena(self):
+        avg = self.recenzja_set.aggregate(srednia=Avg('Ocena'))['srednia']
+        if avg is not None:
+            rounded = Decimal(avg).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+            # Jeśli kończy się na .0, zwróć bez miejsc po przecinku
+            if rounded == rounded.to_integral():
+                return int(rounded)
+            return float(rounded)
+        return 0
 
     def __str__(self):
         return self.Nazwa  # Corrected attribute name
