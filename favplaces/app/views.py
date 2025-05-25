@@ -7,6 +7,8 @@ from django.core.files.base import ContentFile
 from django.db.models import Q
 from datetime import datetime
 from django.core.paginator import Paginator
+import os
+from django.conf import settings
 
 def rejestracja(request):
     if request.method == 'POST':
@@ -206,13 +208,37 @@ def dodaj_miejsce(request):
                 miejsce.save()
                 print(f"Miejsce zapisane: ID={miejsce.ID_Miejsce}")
                 
-                # Obsługa URL zdjęcia
+                # Obsługa zdjęcia - albo z pliku albo z linku URL
                 url_zdjecia = request.POST.get('URL_zdjecia')
-                ocena = request.POST.get('ocena')
+                upload_zdjecia = request.FILES.get('upload_zdjecia')
                 
-                
-                if url_zdjecia:
-                    # Zapisanie zdjęcia
+                if upload_zdjecia:
+                    # Zapisanie przesłanego pliku
+                    # Utwórz folder 'zdjecia' jeśli nie istnieje
+                    upload_path = os.path.join(settings.MEDIA_ROOT, 'zdjecia')
+                    os.makedirs(upload_path, exist_ok=True)
+                    
+                    # Generuj unikalną nazwę pliku
+                    filename = f"{miejsce.ID_Miejsce}_{upload_zdjecia.name}"
+                    filepath = os.path.join(upload_path, filename)
+                    
+                    # Zapisz plik
+                    with open(filepath, 'wb+') as destination:
+                        for chunk in upload_zdjecia.chunks():
+                            destination.write(chunk)
+                    
+                    # Utwórz URL dla zapisanego zdjęcia
+                    url_zdjecia = os.path.join(settings.MEDIA_URL, 'zdjecia', filename)
+                    
+                    # Zapisanie informacji o zdjęciu
+                    zdjecie = Zdjęcia()
+                    zdjecie.ID_Miejsce = miejsce
+                    zdjecie.URL = url_zdjecia
+                    zdjecie.ID_Recenzja = None
+                    zdjecie.save()
+                    
+                elif url_zdjecia:
+                    # Zapisanie zdjęcia z URL
                     zdjecie = Zdjęcia()
                     zdjecie.ID_Miejsce = miejsce
                     zdjecie.URL = url_zdjecia
@@ -220,6 +246,8 @@ def dodaj_miejsce(request):
                     zdjecie.save()
                 
                 # Sprawdź czy ocena została przekazana i jest liczbą
+                ocena = request.POST.get('ocena')
+                
                 if ocena and ocena.isdigit():
                     # Konwersja oceny na liczbę całkowitą (ilość klikniętych gwiazdek)
                     ocena_int = int(ocena)

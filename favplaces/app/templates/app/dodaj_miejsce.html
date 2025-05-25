@@ -13,7 +13,7 @@
 
     <div class="content">
         <h1>Dodaj atrakcje</h1>
-        <form method="post" class="form-container">
+        <form method="post" class="form-container" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="left-form">
                 <input type="text" name="Nazwa" maxlength="100" placeholder="Podaj nazwę" required id="id_Nazwa">
@@ -25,8 +25,15 @@
                 <input type="url" name="Link" maxlength="255" placeholder="Link do Google Maps" id="id_Link">
             </div>
             <div class="right-form">
-                <div class="upload-box">
-                    <span>+ dodaj zdjęcie</span>
+                <div class="upload-box" id="upload-box">
+                    <input type="file" name="upload_zdjecia" id="upload_zdjecia" style="display: none;" accept="image/*">
+                    <div class="upload-content">
+                        <span id="upload-text">+ dodaj zdjęcie</span>
+                        <div id="preview-container" style="display: none;">
+                            <img id="image-preview" src="" alt="Podgląd zdjęcia" style="max-width: 100%; max-height: 150px; margin-top: 10px;">
+                            <span id="file-name" style="display: block; margin-top: 5px; font-size: 12px;"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="or-separator">lub</div>
                 <input type="text" name="URL_zdjecia" maxlength="255" placeholder="Dodaj link do zdjęcia" id="id_URL_zdjecia">
@@ -54,6 +61,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Star rating code 
             const stars = document.querySelectorAll('.star');
             const ocenaInput = document.getElementById('ocena');
             let currentRating = 0;
@@ -97,8 +105,100 @@
                     
                 });
             });
+            
+            // Image upload preview functionality
+            const uploadBox = document.getElementById('upload-box');
+            const fileInput = document.getElementById('upload_zdjecia');
+            const uploadText = document.getElementById('upload-text');
+            const previewContainer = document.getElementById('preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            const fileName = document.getElementById('file-name');
+            
+            // Click effect for upload box
+            uploadBox.addEventListener('click', function(e) {
+                fileInput.click();
+                uploadBox.classList.add('clicked');
+                setTimeout(() => {
+                    uploadBox.classList.remove('clicked');
+                }, 200);
+            });
+            
+            // File selection handling
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    
+                    // Display file name
+                    fileName.textContent = file.name;
+                    
+                    // Show image preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                        uploadText.textContent = 'Zmień zdjęcie';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // URL input and file input interaction
+            const urlInput = document.getElementById('id_URL_zdjecia');
+            urlInput.addEventListener('input', function() {
+                if (this.value) {
+                    // If URL is provided, clear file input
+                    fileInput.value = '';
+                    previewContainer.style.display = 'none';
+                    uploadText.textContent = '+ dodaj zdjęcie';
+                }
+            });
         });
     </script>
+    
+    <style>
+        .upload-box {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .upload-box:hover {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+        
+        .upload-box.clicked {
+            transform: scale(0.98);
+            background-color: #e6f0ff;
+        }
+        
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #upload-text {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        #file-name {
+            color: #666;
+            word-break: break-all;
+        }
+        
+        #preview-container {
+            margin-top: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+    </style>
 </body>
 
 </html>
