@@ -50,9 +50,9 @@ def logowanie(request):
 def atrakcje(request):
     query = request.GET.get('q', '')
     sort = request.GET.get('sort', '')
-    selected_regions = [region for region in request.GET.getlist('region') if region]
-    selected_categories = [category for category in request.GET.getlist('category') if category]
-    selected_ratings = [rating for rating in request.GET.getlist('rating') if rating]
+    selected_regions = request.GET.getlist('region')
+    selected_categories = request.GET.getlist('category')
+    selected_ratings = request.GET.getlist('rating')
 
     miejsca = Miejsce.objects.all()
 
@@ -95,6 +95,9 @@ def atrakcje(request):
         'query': query,
         'regions': regions,
         'categories': categories,
+        'selected_regions': selected_regions,
+        'selected_categories': selected_categories,
+        'selected_ratings': selected_ratings,
     }
 
     return render(request, 'app/atrakcje.html', context)

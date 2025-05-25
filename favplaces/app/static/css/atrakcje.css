@@ -126,22 +126,21 @@ body {
 }
 
 
-/* panel filtrów */
+/* ========== PANEL FILTRÓW ========== */
 
-/* Panel offcanvas */
 .filters-offcanvas {
     position: fixed;
     top: 0;
     right: 0;
-    width: 320px;
+    width: 350px;
     height: 100%;
     background: #fff;
     box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
     z-index: 1001;
-    padding: 20px;
+    padding: 30px 20px;
     transform: translateX(100%);
     transition: transform 0.3s ease;
-    display: block; /* zawsze widoczny, ale przesunięty */
+    overflow-y: auto;
 }
 
 .filters-offcanvas.show {
@@ -172,44 +171,122 @@ body {
 
 .filters-header h2 {
     margin: 0;
+    font-size: 24px;
+    color: #333;
 }
 
 .filters-header button {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
 }
 
-.filters-form-panel select {
-    width: 100%;
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+.filters-header button:hover {
+    color: #ff6666;
+}
+
+.filters-form-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filters-form-panel > label {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    font-size: 15px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 5px;
+}
+
+.filter-group label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.2;
+}
+
+.filter-group input[type="checkbox"] {
+    margin-right: 6px;
+    width: 14px;
+    height: 14px;
+    accent-color: #ffaf02;
 }
 
 .filters-buttons {
     display: flex;
     justify-content: space-between;
-}
-
-.apply-button, .reset-button {
-    padding: 10px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
+    margin-top: 30px;
 }
 
 .apply-button {
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
     background-color: #fff3b2;
     color: #ffaf02;
     border: 2px solid #ffaf02;
+    transition: all 0.3s;
+}
+
+.apply-button:hover {
+    background-color: #ffaf02;
+    color: white;
 }
 
 .reset-button {
-    background-color: transparent;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    color: #ff4d4d;
+    border: 2px solid transparent;
+    background: none;
+    transition: color 0.3s;
+}
+
+.reset-button:hover {
+    text-decoration: underline;
     color: #ff0000;
-    border: none;
+}
+
+.filter-columns {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-group label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #333;
+}
+
+.filter-group input[type="checkbox"] {
+    margin-right: 6px;
+    width: 14px;
+    height: 14px;
+    accent-color: #ffaf02;
 }

@@ -58,34 +58,59 @@
                 </div>
                 <form method="get" action="{% url 'atrakcje' %}" class="filters-form-panel">
                     <label>Region:</label>
-                    <select name="region">
-                        <option value="">Wszystkie</option>
-                        {% for region in regions %}
-                            <option value="{{ region.ID_Regionu }}" {% if region.ID_Regionu|stringformat:"s" in request.GET.region %}selected{% endif %}>
+                    <div class="filter-columns">
+                        <div class="filter-group">
+                            {% for region in regions|slice:":9" %}
+                            <label>
+                                <input type="checkbox" name="region" value="{{ region.ID_Regionu }}"
+                                    {% if region.ID_Regionu|stringformat:"s" in selected_regions %}checked{% endif %}>
                                 {{ region.Nazwa }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <div class="filter-group">
+                            {% for region in regions|slice:"9:" %}
+                            <label>
+                                <input type="checkbox" name="region" value="{{ region.ID_Regionu }}"
+                                    {% if region.ID_Regionu|stringformat:"s" in selected_regions %}checked{% endif %}>
+                                {{ region.Nazwa }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
 
                     <label>Kategoria:</label>
-                    <select name="category">
-                        <option value="">Wszystkie</option>
-                        {% for category in categories %}
-                            <option value="{{ category.ID_Kategoria }}" {% if category.ID_Kategoria|stringformat:"s" in request.GET.category %}selected{% endif %}>
+                    <div class="filter-columns">
+                        <div class="filter-group">
+                            {% for category in categories|slice:":5" %}
+                            <label>
+                                <input type="checkbox" name="category" value="{{ category.ID_Kategorii }}"
+                                    {% if category.ID_Kategorii|stringformat:"s" in selected_categories %}checked{% endif %}>
                                 {{ category.Nazwa }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <div class="filter-group">
+                            {% for category in categories|slice:"5:" %}
+                            <label>
+                                <input type="checkbox" name="category" value="{{ category.ID_Kategorii }}"
+                                    {% if category.ID_Kategorii|stringformat:"s" in selected_categories %}checked{% endif %}>
+                                {{ category.Nazwa }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
 
                     <label>Ocena:</label>
-                    <select name="rating">
-                        <option value="">Dowolna</option>
-                        <option value="5">5 ⭐</option>
-                        <option value="4">4 ⭐</option>
-                        <option value="3">3 ⭐</option>
-                        <option value="2">2 ⭐</option>
-                        <option value="1">1 ⭐</option>
-                    </select>
+                    <div class="filter-group">
+                        {% for i in "54321" %}
+                            <label>
+                                <input type="checkbox" name="rating" value="{{ i }}"
+                                {% if i in selected_ratings %}checked{% endif %}>
+                                {{ i }} ⭐
+                            </label>
+                        {% endfor %}
+                    </div>
 
                     <div class="filters-buttons">
                         <button type="submit" class="apply-button">Zastosuj</button>
