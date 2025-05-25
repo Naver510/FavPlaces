@@ -300,7 +300,7 @@ def miejsce_szczegoly(request, id):
         except Uzytkownik.DoesNotExist:
             request.session.flush()
 
-    recenzje = Recenzja.objects.filter(ID_Miejsce=miejsce).select_related('ID_Użytkownik')
+    recenzje = Recenzja.objects.filter(ID_Miejsce=miejsce).select_related('ID_Użytkownik').order_by('-Data_dodania')
     srednia_ocena = recenzje.aggregate(Avg('Ocena'))['Ocena__avg']
     zdjecia_miejsca = Zdjęcia.objects.filter(ID_Miejsce=miejsce, URL__isnull=False).exclude(URL='')
 

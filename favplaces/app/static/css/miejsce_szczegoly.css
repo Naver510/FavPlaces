@@ -1,0 +1,79 @@
+body {
+    background: #f9f1f0;
+}
+
+.panel {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    margin: 20px auto;
+    /*box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);*/
+    max-width: 1600px;
+    border-radius: 20px;
+    padding: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.miejsce-zdjecie {
+    border-radius: 8px;
+    
+    margin-left: 15px;  
+    margin-top: 15px;
+}
+
+.miejsce-header {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.miejsce-info {
+    flex: 1;
+    margin-top: 15px;
+}
+
+.miejsce-zdjecie img {
+    max-width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.przyciski {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.custom-dodaj,
+.custom-wroc {
+    display: inline-block;
+    padding: 10px 10px;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-decoration: none;
+    text-align: center;
+}
+
+.custom-dodaj {
+    background-color: #fff3b2;
+    color: #ffaf02;
+    border: 2px solid #ffaf02;
+    font-weight: bold;
+}
+
+.custom-dodaj:hover {
+    background-color: #ffaf02;
+    color: #fff3b2;
+}
+
+.custom-wroc {
+    background-color: transparent;
+    color: #e78b8b;
+    border: 2px solid #e78b8b;
+}
+
