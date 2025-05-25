@@ -159,11 +159,15 @@ def ranking(request):
         except Uzytkownik.DoesNotExist:
             request.session.flush()
 
-    rankingi = Ranking.objects.prefetch_related('Miejsca').all()
+    miejsca_z_ocena = Miejsce.objects.annotate(
+        srednia_ocena=Avg('recenzja__Ocena')
+    ).filter(
+        srednia_ocena__isnull=False
+    ).order_by('-srednia_ocena')[:5]
 
     return render(request, 'app/ranking.html', {
         'uzytkownik': uzytkownik,
-        'rankingi': rankingi,
+        'miejsca': miejsca_z_ocena,
     })
 
 
