@@ -14,7 +14,7 @@ def rejestracja(request):
         if form.is_valid():
             uzytkownik = form.save(commit=False)
             uzytkownik.ID_Uprawnienia = Uprawnienia.objects.get(ID_Uprawnienia=2)
-            uzytkownik.ID_Użytkownik = Uzytkownik.objects.count() + 1
+            #uzytkownik.ID_Użytkownik = Uzytkownik.objects.count() + 1
             uzytkownik.save()
             return redirect('strona_glowna')  
     else:
