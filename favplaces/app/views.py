@@ -50,9 +50,14 @@ def logowanie(request):
 def atrakcje(request):
     query = request.GET.get('q', '')
     sort = request.GET.get('sort', '')
-    selected_regions = request.GET.getlist('region')
     selected_categories = request.GET.getlist('category')
+    selected_regions = request.GET.getlist('region')
     selected_ratings = request.GET.getlist('rating')
+
+    # Ensure only valid numeric values are used
+    selected_categories = [int(cat) for cat in selected_categories if cat.strip().isdigit()]
+    selected_regions = [int(region) for region in selected_regions if region.strip().isdigit()]
+    selected_ratings = [int(rating) for rating in selected_ratings if rating.strip().isdigit()]
 
     miejsca = Miejsce.objects.all()
 
@@ -63,15 +68,27 @@ def atrakcje(request):
         miejsca = miejsca.filter(ID_Region__in=selected_regions)
 
     if selected_categories:
-        miejsca = miejsca.filter(ID_Kategoria__in=selected_categories)  # Allow multiple categories
+        miejsca = miejsca.filter(ID_Kategoria__in=selected_categories)
 
     if selected_ratings:
-        miejsca = miejsca.filter(recenzja__Ocena__in=selected_ratings)
+        # Filter for ratings within the range (e.g., 3.0 to 3.99 for rating 3)
+        rating_filters = Q()
+        for rating in selected_ratings:
+            lower_bound = rating - 0.01
+            upper_bound = rating + 0.99
+            rating_filters |= Q(avg_rating__gte=lower_bound, avg_rating__lte=upper_bound)
+        miejsca = miejsca.annotate(avg_rating=Avg('recenzja__Ocena')).filter(rating_filters)
 
     if sort == 'asc':
         miejsca = miejsca.order_by('Nazwa')
     elif sort == 'desc':
         miejsca = miejsca.order_by('-Nazwa')
+
+    # Debugging output for filters
+    print("Selected Categories:", selected_categories)
+    print("Selected Regions:", selected_regions)
+    print("Selected Ratings:", selected_ratings)
+    print("Filtered Miejsca Queryset:", miejsca.query)
 
     # PAGINACJA — 6 elementów na stronę
     paginator = Paginator(miejsca, 6)

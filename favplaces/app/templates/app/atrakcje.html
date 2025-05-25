@@ -84,8 +84,8 @@
                         <div class="filter-group">
                             {% for category in categories|slice:":5" %}
                             <label>
-                                <input type="checkbox" name="category" value="{{ category.ID_Kategorii }}"
-                                    {% if category.ID_Kategorii|stringformat:"s" in selected_categories %}checked{% endif %}>
+                                <input type="checkbox" name="category" value="{{ category.ID_Kategoria }}"
+                                    {% if category.ID_Kategoria|stringformat:"s" in selected_categories %}checked{% endif %}>
                                 {{ category.Nazwa }}
                             </label>
                             {% endfor %}
@@ -93,8 +93,8 @@
                         <div class="filter-group">
                             {% for category in categories|slice:"5:" %}
                             <label>
-                                <input type="checkbox" name="category" value="{{ category.ID_Kategorii }}"
-                                    {% if category.ID_Kategorii|stringformat:"s" in selected_categories %}checked{% endif %}>
+                                <input type="checkbox" name="category" value="{{ category.ID_Kategoria }}"
+                                    {% if category.ID_Kategoria|stringformat:"s" in selected_categories %}checked{% endif %}>
                                 {{ category.Nazwa }}
                             </label>
                             {% endfor %}
@@ -106,7 +106,7 @@
                         {% for i in "54321" %}
                             <label>
                                 <input type="checkbox" name="rating" value="{{ i }}"
-                                {% if i in selected_ratings %}checked{% endif %}>
+                                {% if i|stringformat:"s" in selected_ratings %}checked{% endif %}>
                                 {{ i }} ⭐
                             </label>
                         {% endfor %}
