@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ranking</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/ranking.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/atrakcje.css' %}" />
   </head>
   <body>
     <div class="navbar">
@@ -37,15 +37,37 @@
     </div>
 
     <div class="content">
-      <h1>Ranking miejsc według ocen</h1>
-      {% for miejsce in miejsca %}
-      <div class="ranking-box">
-        <h2>{{ miejsce.Nazwa }}</h2>
-        <p><strong>Średnia ocena:</strong> {{ miejsce.srednia_ocena|floatformat:1 }}</p>
-        <p>{{ miejsce.Miejscowość }}, {{ miejsce.Ulica }}</p>
+      <h1>Ranking miejsc</h1>
+      {% for ranking in rankingi %}
+      <div class="miejsce-box">
+        <h2>{{ ranking.Nazwa }}</h2>
+        <div class="ranking-details" style="margin-left: 20px;">
+          <p><strong>Opis:</strong> {{ ranking.Opis|default:"Brak opisu" }}</p>
+          <p><strong>Data utworzenia:</strong> {{ ranking.Data_utworzenia|date:"d.m.Y H:i" }}</p>
+        </div>
+      </div>
+      {% for miejsce in ranking.Miejsca.all %}
+      <div class="miejsce-box">
+        {% for zdjecie in miejsce.zdjęcia.all %}
+          {% if zdjecie.URL %}
+          <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
+          {% else %}
+          <p>Brak zdjęcia z URL</p>
+          {% endif %}
+        {% endfor %}
+        <div class="miejsce-info">
+          <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
+          <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
+          <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5 ⭐</p>
+          <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}" class="wiecej-button">Więcej</a>
+        </div>
       </div>
       {% empty %}
-        <p>Brak miejsc z ocenami.</p>
+      <p>Brak powiązanych miejsc.</p>
+      {% endfor %}
+      <hr> <!-- Separator between rankings -->
+      {% empty %}
+      <p>Brak rankingów do wyświetlenia.</p>
       {% endfor %}
     </div>
   </body>

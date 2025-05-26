@@ -139,14 +139,10 @@ def ranking(request):
             uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
         except Uzytkownik.DoesNotExist:
             request.session.flush()
-    miejsca_z_ocena = Miejsce.objects.annotate(
-        srednia_ocena=Avg('recenzja__Ocena')
-    ).filter(
-        srednia_ocena__isnull=False
-    ).order_by('-srednia_ocena')[:5]
+    rankingi = Ranking.objects.prefetch_related('Miejsca')  # Prefetch related Miejsca
     return render(request, 'app/ranking.html', {
         'uzytkownik': uzytkownik,
-        'miejsca': miejsca_z_ocena,
+        'rankingi': rankingi,
     })
 
 @csrf_exempt
