@@ -53,10 +53,10 @@
         <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
         <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
         <p><strong>Mapa:</strong>
-            {% if miejsce.link_do_mapy %}
-                <a href="{{ miejsce.link_do_mapy }}" target="_blank">Google Maps</a>
+            {% if miejsce.Link %}
+                <a href="{{ miejsce.Link}}" target="_blank">Lokalizacja miejsca</a>
             {% else %}
-                Brak linku do mapy
+                Brak lokalizacji
             {% endif %}
         </p>
         <p><strong>Ocena:</strong> {{ srednia_ocena|floatformat:1 }}/5<span>⭐</span></p>

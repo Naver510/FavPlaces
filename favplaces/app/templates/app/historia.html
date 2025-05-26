@@ -54,7 +54,7 @@
                 <div class="miejsce-zdjecia">
                     {% for zdjecie in wpis.ID_Miejsca.zdjęcia.all %}
                     {% if zdjecie.URL %}
-                    <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="250">
+                    <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="250" loading="lazy">
                     {% else %}
                     <p>Brak zdjęcia z URL</p>
                     {% endif %}
