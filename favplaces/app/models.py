@@ -117,7 +117,7 @@ class Zdjęcia(models.Model):
         db_table = 'Zdjęcia'  
 
     def __str__(self):
-        return self.zdjęcie
+        return self.URL or "Brak URL"  # Use the URL field for string representation
 
 
 class Kategoria(models.Model):
