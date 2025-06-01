@@ -249,6 +249,8 @@ def dodaj_miejsce(request):
 def miejsce_szczegoly(request, id):
     miejsce = get_object_or_404(Miejsce, pk=id)
     page = request.GET.get('page', '1')
+    rec_limit = int(request.GET.get('rec_limit', 6))  # domyślnie 6
+
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
     if uzytkownik_id:
@@ -260,17 +262,26 @@ def miejsce_szczegoly(request, id):
             )
         except Uzytkownik.DoesNotExist:
             request.session.flush()
-    recenzje = Recenzja.objects.filter(ID_Miejsce=miejsce).select_related('ID_Użytkownik').order_by('-Data_dodania')
-    srednia_ocena = recenzje.aggregate(Avg('Ocena'))['Ocena__avg']
+
+    all_recenzje = Recenzja.objects.filter(ID_Miejsce=miejsce).select_related('ID_Użytkownik').order_by('-Data_dodania')
+    recenzje = all_recenzje[:rec_limit]  # tylko część
+
+    pokaz_wiecej = rec_limit < all_recenzje.count()  # czy są jeszcze jakieś recenzje?
+
+    srednia_ocena = all_recenzje.aggregate(Avg('Ocena'))['Ocena__avg']
     zdjecia_miejsca = Zdjęcia.objects.filter(ID_Miejsce=miejsce, URL__isnull=False).exclude(URL='')
+
     return render(request, 'app/miejsce_szczegoly.html', {
         'miejsce': miejsce,
         'uzytkownik': uzytkownik,
         'recenzje': recenzje,
         'srednia_ocena': srednia_ocena or 0,
         'zdjecia_miejsca': zdjecia_miejsca,
-        'page': page
+        'page': page,
+        'rec_limit': rec_limit,
+        'pokaz_wiecej': pokaz_wiecej
     })
+
 
 def miejsca_lista(request):
     miejsca = Miejsce.objects.prefetch_related('zdjęcia').all()
