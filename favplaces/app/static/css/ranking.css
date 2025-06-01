@@ -1,42 +1,35 @@
-body {
-    background: #f9f1f0;
-}
+.ranking-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-h1 {
-    margin-left: 60px;
-}
+      .ranking-box {
+        width: 100%;
+        max-width: 1000px;
+        margin: 20px auto;
+        background-color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        border: 2px solid black;
+        overflow: hidden;
+      }
 
-.ranking-box {
-  max-width: 1500px;
-  margin: 20px;
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  border: 2px solid black;
-}
+      .ranking-header {
+        padding: 20px;
+        cursor: pointer;
+        background-color: #f4b9b8;
+        border-bottom: 1px solid #ccc;
+      }
 
-.ranking-item {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-  padding: 15px 0;
-}
+      .ranking-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, padding 0.3s ease;
+        padding: 0 20px;
+      }
 
-.ranking-position {
-  font-size: 24px;
-  font-weight: bold;
-  width: 60px;
-  text-align: center;
-  color: #ff7a7a;
-}
-
-.ranking-details h3 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.ranking-details p {
-  margin: 4px 0;
-  color: #555;
-}
+      .ranking-content.open {
+        max-height: 2000px;
+        padding: 20px;
+      }
