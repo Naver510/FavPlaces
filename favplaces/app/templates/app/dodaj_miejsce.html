@@ -16,12 +16,19 @@
         <form method="post" class="form-container" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="left-form">
+                <label for="id_Nazwa">Nazwa<span class="required-star">*</span></label>
                 <input type="text" name="Nazwa" maxlength="100" placeholder="Podaj nazwę" required id="id_Nazwa">
+                <label for="id_Nazwa">Region<span class="required-star">*</span></label>
                 {{ form.ID_Region }}
+                <label for="id_Nazwa">Miejscowość<span class="required-star">*</span></label>
                 <input type="text" name="Miejscowość" maxlength="100" placeholder="Podaj miejscowość" required id="id_Miejscowość">
+                <label for="id_Nazwa">Kod pocztowy<span class="required-star">*</span></label>
                 <input type="text" name="Kod_pocztowy" maxlength="6" placeholder="Podaj kod pocztowy" required id="id_Kod_pocztowy">
+                <label for="id_Nazwa">Ulica<span class="required-star">*</span></label>
                 <input type="text" name="Ulica" maxlength="100" placeholder="Podaj ulicę" required id="id_Ulica">
+                <label for="id_Nazwa">Kategoria<span class="required-star">*</span></label>
                 {{ form.ID_Kategoria }}
+                <label for="id_Nazwa">Link do Google Maps</label>
                 <input type="url" name="Link" maxlength="255" placeholder="Link do Google Maps" id="id_Link">
             </div>
             <div class="right-form">
@@ -50,7 +57,8 @@
                 </div>
             </div>
             <div class="full-width">
-                <textarea name="Opis" cols="40" rows="4" maxlength="500" placeholder="Dodaj opis..." id="id_Opis"></textarea>
+                <label for="id_Nazwa">Opis</label>
+                <textarea name="Opis" cols="40" rows="4" maxlength="500" placeholder="Dodaj opis..." id="id_Opis" style="margin-top: 10px;"></textarea>
             </div>
             <div class="full-width">
                 <button type="submit">Dodaj</button>
