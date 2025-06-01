@@ -28,8 +28,13 @@
                 <input type="text" name="Ulica" maxlength="100" placeholder="Podaj ulicę" required id="id_Ulica">
                 <label for="id_Nazwa">Kategoria<span class="required-star">*</span></label>
                 {{ form.ID_Kategoria }}
-                <label for="id_Nazwa">Link do Google Maps</label>
-                <input type="url" name="Link" maxlength="255" placeholder="Link do Google Maps" id="id_Link">
+                <label for="id_Link">Link do Google Maps</label>
+                <div style="position: relative;">
+                    <input type="url" name="Link" maxlength="255" placeholder="Link do Google Maps" id="id_Link">
+                    <div id="maps-error" style="display: none; color: red; font-size: 12px; margin-top: 5px;">
+                        Podaj prawidłowy link do Google Maps
+                    </div>
+                </div>
             </div>
             <div class="right-form">
                 <div class="upload-box" id="upload-box">
@@ -69,6 +74,36 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Google Maps validation
+            const form = document.querySelector('form');
+            const mapsLink = document.getElementById('id_Link');
+            const mapsError = document.getElementById('maps-error');
+            
+            form.addEventListener('submit', function(e) {
+                const link = mapsLink.value.trim();
+                
+                // Only validate if there's a link provided
+                if (link !== '') {
+                    // Check if link is a Google Maps URL
+                    const isGoogleMapsLink = link.includes('google.com/maps') || 
+                                            link.includes('goo.gl/maps') || 
+                                            link.includes('maps.app.goo.gl');
+                    
+                    if (!isGoogleMapsLink) {
+                        e.preventDefault(); // Prevent form submission
+                        mapsError.style.display = 'block';
+                        mapsLink.style.borderColor = 'red';
+                        return false;
+                    }
+                }
+            });
+            
+            // Reset error when input changes
+            mapsLink.addEventListener('input', function() {
+                mapsError.style.display = 'none';
+                mapsLink.style.borderColor = '';
+            });
+
             // Star rating code 
             const stars = document.querySelectorAll('.star');
             const ocenaInput = document.getElementById('ocena');
