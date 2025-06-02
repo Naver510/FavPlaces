@@ -4,6 +4,10 @@ body {
 
 .content {
     padding: 20px;
+    background: #f9f1f0 url("{% static 'images/stronka_transparent.png' %}") no-repeat center center;
+    background-size: contain; /* Adjust to ensure the full image is visible */
+    min-height: 100vh; /* Ensure the section covers the full viewport height */
+    background-position: center calc(50% - 220px); /* Move the background up by 300px */
 }
 
 /*wyszukiwarka*/
