@@ -141,10 +141,12 @@ def historia(request):
             page_obj = paginator.get_page(page_number)
 
             # Bieżący dzień
-            biezaca_data = page_obj.object_list[0][0]
-
-            # Bieżąca lista wpisów z tego dnia
-            historia_lista = page_obj.object_list[0][1] if page_obj.object_list else []
+            if page_obj.object_list:
+                biezaca_data = page_obj.object_list[0][0]
+                historia_lista = page_obj.object_list[0][1]
+            else:
+                biezaca_data = None
+                historia_lista = []
 
         except Uzytkownik.DoesNotExist:
             request.session.flush()
