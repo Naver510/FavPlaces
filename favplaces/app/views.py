@@ -11,6 +11,7 @@ import os
 from django.conf import settings
 from itertools import islice
 from collections import defaultdict
+from django.contrib import messages
 
 def rejestracja(request):
     if request.method == 'POST':
@@ -209,17 +210,47 @@ def dodaj_miejsce(request):
         except Uzytkownik.DoesNotExist:
             request.session.flush()
             return redirect('logowanie')
+    success_message = None
+    error_message = None
     if request.method == 'POST':
         form = MiejsceForm(request.POST)
+        region_id = request.POST.get('ID_Region')
+        
+        # Check if rating was provided
+        ocena = request.POST.get('ocena')
+        if not ocena or ocena == '0':
+            error_message = "Proszę ocenić miejsce (1-5 gwiazdek)"
+            return render(request, 'app/dodaj_miejsce.html', {
+                'form': form,
+                'uzytkownik': uzytkownik,
+                'success_message': None,
+                'error_message': error_message,
+            })
+    
+        # Jeśli wybrano region "Poza Polską", kod pocztowy nie jest wymagany
+        if region_id == '17':
+            if 'Kod_pocztowy' in form.errors:
+                form.errors.pop('Kod_pocztowy')
+            # Tworzymy kopię cleaned_data (jeśli istnieje) i dodajemy pusty kod pocztowy
+            data_copy = form.data.copy()
+            data_copy['Kod_pocztowy'] = None  # Używamy None zamiast pustego ciągu
+            form.data = data_copy
+            if hasattr(form, 'cleaned_data'):
+                form.cleaned_data['Kod_pocztowy'] = None
+    
         if form.is_valid():
             try:
                 miejsce = form.save(commit=False)
                 miejsce.ID_Użytkownik = uzytkownik
                 miejsce.Data_dodania = timezone.now()
-                maps_link = request.POST.get('maps_link')
+                if region_id == '17':
+                    miejsce.Kod_pocztowy = None
+                
+                maps_link = request.POST.get('Link')  # Poprawiona nazwa pola
                 if maps_link:
                     miejsce.Link = maps_link
                 miejsce.save()
+
                 url_zdjecia = request.POST.get('URL_zdjecia')
                 upload_zdjecia = request.FILES.get('upload_zdjecia')
                 if upload_zdjecia:
@@ -242,8 +273,9 @@ def dodaj_miejsce(request):
                     zdjecie.URL = url_zdjecia
                     zdjecie.ID_Recenzja = None
                     zdjecie.save()
-                ocena = request.POST.get('ocena')
-                if ocena and ocena.isdigit():
+                
+                # Ensure rating is added
+                if ocena and ocena.isdigit() and int(ocena) > 0:
                     ocena_int = int(ocena)
                     recenzja = Recenzja()
                     recenzja.ID_Użytkownik = uzytkownik
@@ -252,16 +284,32 @@ def dodaj_miejsce(request):
                     recenzja.Data_dodania = timezone.now()
                     recenzja.ID_Miejsce = miejsce
                     recenzja.save()
+                else:
+                    # If we get here without a valid rating, something went wrong with validation
+                    # Remove the place we just added
+                    miejsce.delete()
+                    error_message = "Dodanie oceny jest wymagane. Miejsce nie zostało dodane."
+                    return render(request, 'app/dodaj_miejsce.html', {
+                        'form': form,
+                        'uzytkownik': uzytkownik,
+                        'success_message': None,
+                        'error_message': error_message,
+                    })
+                
+                # Dodaj komunikat i przekieruj na stronę atrakcji
+                messages.success(request, "Miejsce zostało dodane pomyślnie!")
                 return redirect('atrakcje')
             except Exception as e:
-                form.add_error(None, f"Błąd podczas zapisywania: {e}")
+                error_message = f"Błąd podczas zapisywania: {e}"
         else:
-            print("Formularz nieprawidłowy:", form.errors)
+            error_message = "Formularz nieprawidłowy: " + "; ".join([f"{k}: {v}" for k, v in form.errors.items()])
     else:
         form = MiejsceForm()
     return render(request, 'app/dodaj_miejsce.html', {
         'form': form,
-        'uzytkownik': uzytkownik
+        'uzytkownik': uzytkownik,
+        'success_message': None,
+        'error_message': error_message,
     })
 
 def miejsce_szczegoly(request, id):

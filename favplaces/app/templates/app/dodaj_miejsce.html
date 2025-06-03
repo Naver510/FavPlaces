@@ -13,6 +13,16 @@
 
     <div class="content">
         <h1>Dodaj atrakcje</h1>
+        {% if success_message %}
+            <div style="background:#d4edda;color:#155724;padding:10px 20px;border-radius:10px;margin-bottom:15px;border:1px solid #c3e6cb;">
+                {{ success_message }}
+            </div>
+        {% endif %}
+        {% if error_message %}
+            <div style="background:#f8d7da;color:#721c24;padding:10px 20px;border-radius:10px;margin-bottom:15px;border:1px solid #f5c6cb;">
+                {{ error_message }}
+            </div>
+        {% endif %}
         <form method="post" class="form-container" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="left-form">
@@ -23,7 +33,7 @@
                 <label for="id_Nazwa">Miejscowość<span class="required-star">*</span></label>
                 <input type="text" name="Miejscowość" maxlength="100" placeholder="Podaj miejscowość" required id="id_Miejscowość">
                 <label for="id_Nazwa">Kod pocztowy<span class="required-star">*</span></label>
-                <input type="text" name="Kod_pocztowy" maxlength="6" placeholder="Podaj kod pocztowy" required id="id_Kod_pocztowy">
+                <input type="text" name="Kod_pocztowy" maxlength="6" placeholder="Podaj kod pocztowy" id="id_Kod_pocztowy">
                 <label for="id_Nazwa">Ulica<span class="required-star">*</span></label>
                 <input type="text" name="Ulica" maxlength="100" placeholder="Podaj ulicę" required id="id_Ulica">
                 <label for="id_Nazwa">Kategoria<span class="required-star">*</span></label>
@@ -51,14 +61,17 @@
                 <input type="text" name="URL_zdjecia" maxlength="255" placeholder="Dodaj link do zdjęcia" id="id_URL_zdjecia">
             </div>
             <div class="rating">
-                <label>Ocena:</label>
+                <label>Ocena:<span class="required-star">*</span></label>
                 <div class="stars-container">
-                    <input type="hidden" name="ocena" id="ocena" value="0">
+                    <input type="hidden" name="ocena" id="ocena" value="0" required>
                     <span class="star" data-value="1">☆</span>
                     <span class="star" data-value="2">☆</span>
                     <span class="star" data-value="3">☆</span>
                     <span class="star" data-value="4">☆</span>
                     <span class="star" data-value="5">☆</span>
+                </div>
+                <div id="rating-error" style="display: none; color: red; font-size: 12px; margin-top: 5px;">
+                    Proszę ocenić miejsce (1-5 gwiazdek)
                 </div>
             </div>
             <div class="full-width">
@@ -78,8 +91,18 @@
             const form = document.querySelector('form');
             const mapsLink = document.getElementById('id_Link');
             const mapsError = document.getElementById('maps-error');
+            const ocenaInput = document.getElementById('ocena');
+            const ratingError = document.getElementById('rating-error');
             
             form.addEventListener('submit', function(e) {
+                // Check rating validation
+                if (ocenaInput.value === "0") {
+                    e.preventDefault(); // Prevent form submission
+                    ratingError.style.display = 'block';
+                    document.querySelector('.stars-container').style.borderColor = 'red';
+                    return false;
+                }
+                
                 const link = mapsLink.value.trim();
                 
                 // Only validate if there's a link provided
@@ -106,7 +129,6 @@
 
             // Star rating code 
             const stars = document.querySelectorAll('.star');
-            const ocenaInput = document.getElementById('ocena');
             let currentRating = 0;
             
             // Function to update stars display
@@ -116,6 +138,12 @@
                     star.textContent = value <= rating ? '★' : '☆';
                 });
                 console.log('Current rating:', rating);
+                
+                // Hide error message if a rating is selected
+                if (rating > 0) {
+                    ratingError.style.display = 'none';
+                    document.querySelector('.stars-container').style.borderColor = '';
+                }
             }
             
             // Add styling to make stars clickable
@@ -195,6 +223,66 @@
                     uploadText.textContent = '+ dodaj zdjęcie';
                 }
             });
+
+            // Kod pocztowy - obsługa regionu spoza Polski (ID_Regionu = 17)
+            const regionSelect = document.getElementById('{{ form.ID_Region.auto_id }}') || document.querySelector('[name="{{ form.ID_Region.name }}"]');
+            const kodPocztowyInput = document.getElementById('id_Kod_pocztowy');
+            // Dodaj komunikat o błędzie
+            let kodError = document.createElement('div');
+            kodError.id = 'kod-error';
+            kodError.style.display = 'none';
+            kodError.style.color = 'red';
+            kodError.style.fontSize = '12px';
+            kodError.style.marginTop = '5px';
+            kodPocztowyInput.parentNode.insertBefore(kodError, kodPocztowyInput.nextSibling);
+
+            function checkRegion() {
+                let selectedValue = regionSelect.value;
+                if (selectedValue === "17") {
+                    kodPocztowyInput.disabled = true;
+                    kodPocztowyInput.required = false;
+                    kodPocztowyInput.value = '';
+                    kodPocztowyInput.style.backgroundColor = '#eee';
+                    kodError.style.display = 'none';
+                } else {
+                    kodPocztowyInput.disabled = false;
+                    kodPocztowyInput.required = true;
+                    kodPocztowyInput.style.backgroundColor = '';
+                }
+            }
+
+            if(regionSelect && kodPocztowyInput) {
+                regionSelect.addEventListener('change', checkRegion);
+                checkRegion();
+            }
+
+            // Walidacja kodu pocztowego przy submit
+            form.addEventListener('submit', function(e) {
+                let selectedValue = regionSelect.value;
+                if (selectedValue !== "17") {
+                    const kod = kodPocztowyInput.value.trim();
+                    const kodRegex = /^\d{2}-\d{3}$/;
+                    if (!kodRegex.test(kod)) {
+                        e.preventDefault();
+                        kodError.textContent = 'Kod pocztowy musi być w formacie NN-NNN (np. 22-600)';
+                        kodError.style.display = 'block';
+                        kodPocztowyInput.style.borderColor = 'red';
+                        return false;
+                    } else {
+                        kodError.style.display = 'none';
+                        kodPocztowyInput.style.borderColor = '';
+                    }
+                } else {
+                    kodError.style.display = 'none';
+                    kodPocztowyInput.style.borderColor = '';
+                }
+            });
+
+            // Reset błędu przy zmianie kodu pocztowego
+            kodPocztowyInput.addEventListener('input', function() {
+                kodError.style.display = 'none';
+                kodPocztowyInput.style.borderColor = '';
+            });
         });
     </script>
     
@@ -240,6 +328,30 @@
             margin-top: 10px;
             border-radius: 5px;
             overflow: hidden;
+        }
+        
+        .stars-container {
+            display: inline-block;
+            border: 2px solid transparent;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .required-star {
+            color: red;
+            margin-left: 3px;
+        }
+        
+        .rating {
+            margin-bottom: 15px;
+        }
+        
+        .or-separator {
+            color: #666;
+            font-weight: bold;
+            margin: 10px 0;
+            text-align: center;
         }
     </style>
 </body>

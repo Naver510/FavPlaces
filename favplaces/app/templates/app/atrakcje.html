@@ -130,6 +130,14 @@
             <!-- Overlay -->
             <div id="filters-overlay" class="filters-overlay"></div>
 
+            {% if messages %}
+              {% for message in messages %}
+                <div style="background:#d4edda;color:#155724;padding:10px 20px;border-radius:10px;margin-bottom:15px;border:1px solid #c3e6cb;">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+
             {% for miejsce in page_obj %}
             <div class="miejsce-box">
                 {% for zdjecie in miejsce.zdjęcia.all %}
