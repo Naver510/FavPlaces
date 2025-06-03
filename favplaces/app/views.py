@@ -12,6 +12,7 @@ from django.conf import settings
 from itertools import islice
 from collections import defaultdict
 from django.contrib import messages
+from django.utils.http import urlencode
 
 def rejestracja(request):
     if request.method == 'POST':
@@ -64,9 +65,9 @@ def atrakcje(request):
     if selected_ratings:
         rating_filters = Q()
         for rating in selected_ratings:
-            lower_bound = rating - 0.01
-            upper_bound = rating + 0.99
-            rating_filters |= Q(avg_rating__gte=lower_bound, avg_rating__lte=upper_bound)
+            lower_bound = int(rating) - 0.01
+            upper_bound = int(rating) + 0.99
+            rating_filters |= Q(recenzja__Ocena__gte=lower_bound, recenzja__Ocena__lte=upper_bound)
         miejsca = miejsca.annotate(avg_rating=Avg('recenzja__Ocena')).filter(rating_filters)
     if sort == 'asc':
         miejsca = miejsca.order_by('Nazwa')
@@ -76,9 +77,11 @@ def atrakcje(request):
         miejsca = miejsca.annotate(avg_rating=Avg('recenzja__Ocena')).order_by('avg_rating')
     elif sort == 'rating_desc':
         miejsca = miejsca.annotate(avg_rating=Avg('recenzja__Ocena')).order_by('-avg_rating')
+
     paginator = Paginator(miejsca, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
     if uzytkownik_id:
@@ -86,8 +89,16 @@ def atrakcje(request):
             uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
         except Uzytkownik.DoesNotExist:
             del request.session['uzytkownik_id']
+
     regions = Region.objects.all()
     categories = Kategoria.objects.all()
+
+    # Budujemy parametry GET oprócz 'page' - do linków paginacji
+    get_params = request.GET.copy()
+    if 'page' in get_params:
+        del get_params['page']
+    params = get_params.urlencode()
+
     context = {
         'page_obj': page_obj,
         'uzytkownik': uzytkownik,
@@ -97,7 +108,8 @@ def atrakcje(request):
         'selected_regions': selected_regions,
         'selected_categories': selected_categories,
         'selected_ratings': selected_ratings,
-    }   
+        'params': params,
+    }
     return render(request, 'app/atrakcje.html', context)
 
 def strona_glowna(request):
