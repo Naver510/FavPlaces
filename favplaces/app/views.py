@@ -45,12 +45,15 @@ def logowanie(request):
 def atrakcje(request):
     query = request.GET.get('q', '')
     sort = request.GET.get('sort', '')
-    selected_categories = request.GET.getlist('category')
+
     selected_regions = request.GET.getlist('region')
+    selected_categories = request.GET.getlist('category')
     selected_ratings = request.GET.getlist('rating')
-    selected_categories = [int(cat) for cat in selected_categories if cat.strip().isdigit()]
-    selected_regions = [int(region) for region in selected_regions if region.strip().isdigit()]
-    selected_ratings = [int(rating) for rating in selected_ratings if rating.strip().isdigit()]
+
+    selected_regions = [r for r in selected_regions if r.strip()]
+    selected_categories = [c for c in selected_categories if c.strip()]
+    selected_ratings = [r for r in selected_ratings if r.strip().isdigit()]
+
     miejsca = Miejsce.objects.all()
     if query:
         miejsca = miejsca.filter(Nazwa__icontains=query)
@@ -94,7 +97,7 @@ def atrakcje(request):
         'selected_regions': selected_regions,
         'selected_categories': selected_categories,
         'selected_ratings': selected_ratings,
-    }
+    }   
     return render(request, 'app/atrakcje.html', context)
 
 def strona_glowna(request):
