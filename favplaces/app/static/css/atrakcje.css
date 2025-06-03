@@ -292,3 +292,56 @@ body {
     height: 14px;
     accent-color: #ffaf02;
 }
+
+.active-filters-container {
+    margin: 15px auto 30px auto;
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    background-color: #fff3b2;
+    border: 2px solid #ffaf02;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #ffaf02;
+    box-shadow: 0 2px 8px rgba(255, 175, 2, 0.3);
+}
+
+.active-filters-container span {
+    white-space: nowrap;
+}
+
+.active-filters-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.active-filter-tag {
+    background-color: #ffaf02;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: default;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.active-filter-tag .remove-filter {
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    font-size: 16px;
+    line-height: 1;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.active-filter-tag .remove-filter:hover {
+    color: #ffd966;
+}

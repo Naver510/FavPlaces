@@ -58,6 +58,14 @@
                 <button id="open-filters" class="add-place-button">Filtruj</button>
             </div>
 
+            <!-- aktywne filtry -->
+            <div class="active-filters-container">
+                <span>Aktywne filtry:</span>
+                <div class="active-filters-list">
+                    <!-- Tutaj będą tagi filtrów -->
+                </div>
+            </div>
+
             <!-- Panel filtrowania -->
             <div id="filters-panel" class="filters-offcanvas">
                 <div class="filters-header">
@@ -177,6 +185,7 @@
     </div>
 
     <script>
+        // filtrowanie
         const panel = document.getElementById('filters-panel');
         const overlay = document.getElementById('filters-overlay');
 
@@ -194,6 +203,71 @@
             panel.classList.remove('show');
             overlay.classList.remove('show');
         });
+
+        // wyświetlanie aktywnych filtrów
+        const activeFiltersList = document.querySelector('.active-filters-list');
+
+        document.querySelectorAll('.filters-offcanvas input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const category = this.name;           // np. "region"
+                const value = this.value;             // np. "3"
+                const filterId = `${category}-${value}`;
+                const filterLabel = this.closest('label').textContent.trim();
+
+                if (this.checked) {
+                    addFilter(filterLabel, filterId);
+                } else {
+                    // Usuwanie filtra wyłączone, więc nic tu nie rób
+                }
+                saveActiveFiltersToLocalStorage();
+            });
+        });
+
+        function addFilter(name, id) {
+            if (document.getElementById(`filter-${id}`)) return;
+
+            const tag = document.createElement('div');
+            tag.className = 'active-filter-tag';
+            tag.id = `filter-${id}`;
+            tag.textContent = name;
+
+            // Usunięto przycisk '×' - filtry tylko do wyświetlania
+
+            activeFiltersList.appendChild(tag);
+        }
+
+        function saveActiveFiltersToLocalStorage() {
+            const checkedCheckboxes = [...document.querySelectorAll('.filters-offcanvas input[type="checkbox"]:checked')];
+            const activeFilters = checkedCheckboxes.map(cb => ({
+                category: cb.name,
+                value: cb.value,
+                label: cb.closest('label').textContent.trim()
+            }));
+            localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+        }
+
+        function loadActiveFiltersFromLocalStorage() {
+            const stored = localStorage.getItem('activeFilters');
+            if (!stored) return;
+
+            const activeFilters = JSON.parse(stored);
+            activeFilters.forEach(({category, value, label}) => {
+                const checkbox = document.querySelector(`.filters-offcanvas input[name="${category}"][value="${value}"]`);
+                if (checkbox) checkbox.checked = true;
+
+                addFilter(label, `${category}-${value}`);
+            });
+        }
+
+        document.querySelector('.reset-button').addEventListener('click', () => {
+            localStorage.removeItem('activeFilters');
+            // Usuń tagi filtrów z widoku
+            document.querySelectorAll('.active-filter-tag').forEach(tag => tag.remove());
+        });
+
+        // Załaduj filtry po odświeżeniu
+        loadActiveFiltersFromLocalStorage();
+
     </script>
 </body>
 </html>
