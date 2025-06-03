@@ -113,19 +113,25 @@
             <p><strong>Data utworzenia:</strong> {{ ranking.Data_utworzenia|date:"d.m.Y H:i" }}</p>
           </div>
           <div class="ranking-content">
-            {% for miejsce in ranking.Miejsca.all %}
+            {% for miejsce in ranking.sorted_miejsca %}
             <div class="miejsce-box">
               {% for zdjecie in miejsce.zdjęcia.all %}
                 {% if zdjecie.URL %}
                 <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
-                {% else %}
-                <p>Brak zdjęcia z URL</p>
                 {% endif %}
+              {% empty %}
+                <p>Brak zdjęcia</p>
               {% endfor %}
               <div class="miejsce-info">
                 <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
                 <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
-                <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5 ⭐</p>
+                <p><strong>Ocena:</strong>
+                  {% if miejsce.avg_ocena %}
+                    {{ miejsce.avg_ocena|floatformat:1 }}/5 ⭐
+                  {% else %}
+                    Brak ocen
+                  {% endif %}
+                </p>
                 <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}" class="wiecej-button">Więcej</a>
               </div>
             </div>

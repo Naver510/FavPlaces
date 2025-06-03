@@ -4,7 +4,7 @@ from .forms import RejestracjaForm, LogowanieForm, MiejsceForm
 from .models import Uzytkownik, Uprawnienia, Miejsce, Kategoria, Region, Zdjęcia, HistoriaWyszukiwan, Recenzja, Ranking
 from django.utils import timezone
 from django.core.files.base import ContentFile
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Case, When, Value, IntegerField
 from datetime import datetime
 from django.core.paginator import Paginator
 import os
@@ -160,6 +160,8 @@ def historia(request):
         'biezaca_data': biezaca_data,
     })
 
+
+
 def ranking(request):
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
@@ -168,7 +170,21 @@ def ranking(request):
             uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
         except Uzytkownik.DoesNotExist:
             request.session.flush()
-    rankingi = Ranking.objects.prefetch_related('Miejsca')  # Prefetch related Miejsca
+
+    rankingi = Ranking.objects.all().prefetch_related('Miejsca__zdjęcia')
+
+    for ranking in rankingi:
+        miejsca_z_ocenami = ranking.Miejsca.annotate(
+            avg_ocena=Avg('recenzja__Ocena'),
+            ocena_null=Case(
+                When(recenzja__Ocena__isnull=True, then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            )
+        ).order_by('ocena_null', '-avg_ocena')  # NULLs last
+
+        ranking.sorted_miejsca = miejsca_z_ocenami
+
     return render(request, 'app/ranking.html', {
         'uzytkownik': uzytkownik,
         'rankingi': rankingi,
