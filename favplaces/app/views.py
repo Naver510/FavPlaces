@@ -128,7 +128,7 @@ def historia(request):
             uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
             query = request.GET.get('q', '')
             data_wyszukiwania = request.GET.get('data_wyszukiwania', '')
-            historia_qs = HistoriaWyszukiwan.objects.filter(ID_Użytkownik=uzytkownik).order_by('-Data_wyszukiwania')
+            historia_qs = HistoriaWyszukiwan.objects.filter(ID_Użytkownika=uzytkownik).order_by('-Data_wyszukiwania')
 
             if query:
                 historia_qs = historia_qs.filter(
@@ -217,6 +217,7 @@ def wyloguj(request):
 def dodaj_miejsce(request):
     if not request.session.get('uzytkownik_id'):
         return redirect('logowanie')
+    
     uzytkownik = None
     uzytkownik_id = request.session.get('uzytkownik_id')
     if uzytkownik_id:
@@ -261,7 +262,7 @@ def dodaj_miejsce(request):
                 if region_id == '17':
                     miejsce.Kod_pocztowy = None
                 
-                maps_link = request.POST.get('Link')  # Poprawiona nazwa pola
+                maps_link = request.POST.get('Link')
                 if maps_link:
                     miejsce.Link = maps_link
                 miejsce.save()
@@ -269,6 +270,7 @@ def dodaj_miejsce(request):
                 url_zdjecia = request.POST.get('URL_zdjecia')
                 upload_zdjecia = request.FILES.get('upload_zdjecia')
                 if upload_zdjecia:
+                    # Use environment-aware media handling
                     upload_path = os.path.join(settings.MEDIA_ROOT, 'zdjecia')
                     os.makedirs(upload_path, exist_ok=True)
                     filename = f"{miejsce.ID_Miejsce}_{upload_zdjecia.name}"
@@ -338,7 +340,7 @@ def miejsce_szczegoly(request, id):
         try:
             uzytkownik = Uzytkownik.objects.get(ID_Użytkownik=uzytkownik_id)
             HistoriaWyszukiwan.objects.create(
-                ID_Użytkownik=uzytkownik,
+                ID_Użytkownika=uzytkownik,
                 ID_Miejsca=miejsce
             )
         except Uzytkownik.DoesNotExist:
