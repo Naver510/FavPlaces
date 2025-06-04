@@ -1,3 +1,4 @@
+-- filepath: c:\Users\Micha\Documents\GitHub\FavPlaces\supabase\migrations\20250604205101_damp_sky.sql
 /*
   # Initial Schema Setup
 
@@ -30,10 +31,7 @@
       - Nazwa (name)
       - Ulica (street)
       - Opis (description)
-      - Data_dodania (date added)
-      - Miejscowość (city)
-      - Kod_pocztowy (postal code)
-      - Link (link)
+      - Data_utworzenia (creation date)
 
     - Recenzja (Review)
       - ID_Recenzja (primary key)
@@ -60,11 +58,6 @@
       - Nazwa (name)
       - Opis (description)
       - Data_utworzenia (creation date)
-
-    - Ranking_Miejsca (Ranking Places)
-      - id (primary key)
-      - ranking_id (foreign key)
-      - miejsce_id (foreign key)
 
   2. Security
     - Enable RLS on all tables
@@ -193,17 +186,3 @@ CREATE POLICY "Enable read access for authenticated users" ON "Zdjęcia" FOR SEL
 CREATE POLICY "Enable read access for authenticated users" ON "historia_wyszukiwan" FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Enable read access for authenticated users" ON "Ranking" FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Enable read access for authenticated users" ON "Ranking_Miejsca" FOR SELECT TO authenticated USING (true);
-
--- Add insert policies for authenticated users
-CREATE POLICY "Enable insert for authenticated users" ON "Miejsce" FOR INSERT TO authenticated WITH CHECK (auth.uid() = "ID_Użytkownik"::text);
-CREATE POLICY "Enable insert for authenticated users" ON "Recenzja" FOR INSERT TO authenticated WITH CHECK (auth.uid() = "ID_Użytkownik"::text);
-CREATE POLICY "Enable insert for authenticated users" ON "Zdjęcia" FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "Enable insert for authenticated users" ON "historia_wyszukiwan" FOR INSERT TO authenticated WITH CHECK (auth.uid() = "ID_Użytkownik"::text);
-
--- Add update policies for authenticated users
-CREATE POLICY "Enable update for own content" ON "Miejsce" FOR UPDATE TO authenticated USING (auth.uid() = "ID_Użytkownik"::text);
-CREATE POLICY "Enable update for own content" ON "Recenzja" FOR UPDATE TO authenticated USING (auth.uid() = "ID_Użytkownik"::text);
-
--- Add delete policies for authenticated users
-CREATE POLICY "Enable delete for own content" ON "Miejsce" FOR DELETE TO authenticated USING (auth.uid() = "ID_Użytkownik"::text);
-CREATE POLICY "Enable delete for own content" ON "Recenzja" FOR DELETE TO authenticated USING (auth.uid() = "ID_Użytkownik"::text);

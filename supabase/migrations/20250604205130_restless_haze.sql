@@ -1,32 +1,16 @@
-/*
-  # Insert Initial Data
-
-  1. Insert base data for:
-    - Permissions (Uprawnienia)
-    - Regions (Region)
-    - Categories (Kategoria)
-
-  2. Security
-    - Data is inserted with RLS policies in place
-*/
-
--- Insert Uprawnienia data
-INSERT INTO "Uprawnienia" ("ID_Uprawnienia", "Nazwa") VALUES
-(1, 'Administrator'),
-(2, 'Użytkownik');
-
+-- filepath: c:\Users\Micha\Documents\GitHub\FavPlaces\supabase\migrations\20250604205130_restless_haze.sql
 -- Insert Region data
 INSERT INTO "Region" ("ID_Regionu", "Nazwa") VALUES
-(1, 'dolnośląskie'),
-(2, 'kujawsko-pomorskie'),
-(3, 'lubelskie'),
+(1, 'mazowieckie'),
+(2, 'małopolskie'),
+(3, 'dolnośląskie'),
 (4, 'lubuskie'),
 (5, 'łódzkie'),
-(6, 'małopolskie'),
-(7, 'mazowieckie'),
-(8, 'opolskie'),
-(9, 'podkarpackie'),
-(10, 'podlaskie'),
+(6, 'podkarpackie'),
+(7, 'podlaskie'),
+(8, 'zachodniopomorskie'),
+(9, 'wielkopolskie'),
+(10, 'opolskie'),
 (11, 'pomorskie'),
 (12, 'śląskie'),
 (13, 'świętokrzyskie'),
