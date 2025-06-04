@@ -1,0 +1,359 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj atrakcje</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dodaj_miejsce.css' %}">
+</head>
+
+<body>
+
+    <div class="content">
+        <h1>Dodaj atrakcje</h1>
+        {% if success_message %}
+            <div style="background:#d4edda;color:#155724;padding:10px 20px;border-radius:10px;margin-bottom:15px;border:1px solid #c3e6cb;">
+                {{ success_message }}
+            </div>
+        {% endif %}
+        {% if error_message %}
+            <div style="background:#f8d7da;color:#721c24;padding:10px 20px;border-radius:10px;margin-bottom:15px;border:1px solid #f5c6cb;">
+                {{ error_message }}
+            </div>
+        {% endif %}
+        <form method="post" class="form-container" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="left-form">
+                <label for="id_Nazwa">Nazwa<span class="required-star">*</span></label>
+                <input type="text" name="Nazwa" maxlength="100" placeholder="Podaj nazwę" required id="id_Nazwa">
+                <label for="id_Nazwa">Region<span class="required-star">*</span></label>
+                {{ form.ID_Region }}
+                <label for="id_Nazwa">Miejscowość<span class="required-star">*</span></label>
+                <input type="text" name="Miejscowość" maxlength="100" placeholder="Podaj miejscowość" required id="id_Miejscowość">
+                <label for="id_Nazwa">Kod pocztowy<span class="required-star">*</span></label>
+                <input type="text" name="Kod_pocztowy" maxlength="6" placeholder="Podaj kod pocztowy" id="id_Kod_pocztowy">
+                <label for="id_Nazwa">Ulica<span class="required-star">*</span></label>
+                <input type="text" name="Ulica" maxlength="100" placeholder="Podaj ulicę" required id="id_Ulica">
+                <label for="id_Nazwa">Kategoria<span class="required-star">*</span></label>
+                {{ form.ID_Kategoria }}
+                <label for="id_Link">Link do Google Maps</label>
+                <div style="position: relative;">
+                    <input type="url" name="Link" maxlength="255" placeholder="Link do Google Maps" id="id_Link">
+                    <div id="maps-error" style="display: none; color: red; font-size: 12px; margin-top: 5px;">
+                        Podaj prawidłowy link do Google Maps
+                    </div>
+                </div>
+            </div>
+            <div class="right-form">
+                <div class="upload-box" id="upload-box">
+                    <input type="file" name="upload_zdjecia" id="upload_zdjecia" style="display: none;" accept="image/*">
+                    <div class="upload-content">
+                        <span id="upload-text">+ dodaj zdjęcie</span>
+                        <div id="preview-container" style="display: none;">
+                            <img id="image-preview" src="" alt="Podgląd zdjęcia" style="max-width: 100%; max-height: 150px; margin-top: 10px;">
+                            <span id="file-name" style="display: block; margin-top: 5px; font-size: 12px;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="or-separator">lub</div>
+                <input type="text" name="URL_zdjecia" maxlength="255" placeholder="Dodaj link do zdjęcia" id="id_URL_zdjecia">
+            </div>
+            <div class="rating">
+                <label>Ocena:<span class="required-star">*</span></label>
+                <div class="stars-container">
+                    <input type="hidden" name="ocena" id="ocena" value="0" required>
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+                <div id="rating-error" style="display: none; color: red; font-size: 12px; margin-top: 5px;">
+                    Proszę ocenić miejsce (1-5 gwiazdek)
+                </div>
+            </div>
+            <div class="full-width">
+                <label for="id_Nazwa">Opis<span class="required-star">*</span></label>
+                <textarea required name="Opis" cols="40" rows="4" maxlength="500" placeholder="Dodaj opis..." id="id_Opis" style="margin-top: 10px;"></textarea>
+            </div>
+            <div class="full-width">
+                <button type="submit">Dodaj</button>
+                <a href="{% url 'strona_glowna' %}"class="button-link">Anuluj</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Google Maps validation
+            const form = document.querySelector('form');
+            const mapsLink = document.getElementById('id_Link');
+            const mapsError = document.getElementById('maps-error');
+            const ocenaInput = document.getElementById('ocena');
+            const ratingError = document.getElementById('rating-error');
+            
+            form.addEventListener('submit', function(e) {
+                // Check rating validation
+                if (ocenaInput.value === "0") {
+                    e.preventDefault(); // Prevent form submission
+                    ratingError.style.display = 'block';
+                    document.querySelector('.stars-container').style.borderColor = 'red';
+                    return false;
+                }
+                
+                const link = mapsLink.value.trim();
+                
+                // Only validate if there's a link provided
+                if (link !== '') {
+                    // Check if link is a Google Maps URL
+                    const isGoogleMapsLink = link.includes('google.com/maps') || 
+                                            link.includes('goo.gl/maps') || 
+                                            link.includes('maps.app.goo.gl');
+                    
+                    if (!isGoogleMapsLink) {
+                        e.preventDefault(); // Prevent form submission
+                        mapsError.style.display = 'block';
+                        mapsLink.style.borderColor = 'red';
+                        return false;
+                    }
+                }
+            });
+            
+            // Reset error when input changes
+            mapsLink.addEventListener('input', function() {
+                mapsError.style.display = 'none';
+                mapsLink.style.borderColor = '';
+            });
+
+            // Star rating code 
+            const stars = document.querySelectorAll('.star');
+            let currentRating = 0;
+            
+            // Function to update stars display
+            function updateStars(rating) {
+                stars.forEach(star => {
+                    const value = parseInt(star.getAttribute('data-value'));
+                    star.textContent = value <= rating ? '★' : '☆';
+                });
+                console.log('Current rating:', rating);
+                
+                // Hide error message if a rating is selected
+                if (rating > 0) {
+                    ratingError.style.display = 'none';
+                    document.querySelector('.stars-container').style.borderColor = '';
+                }
+            }
+            
+            // Add styling to make stars clickable
+            stars.forEach(star => {
+                star.style.cursor = 'pointer';
+                star.style.fontSize = '24px';
+                star.style.color = '#FFD700'; // gold color for stars
+                
+                // Handle hover effects
+                star.addEventListener('mouseover', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    updateStars(value);
+                });
+                
+                star.addEventListener('mouseout', function() {
+                    updateStars(currentRating);
+                });
+                
+                // Handle click to set rating
+                star.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent form submission
+                    const value = parseInt(this.getAttribute('data-value'));
+                    currentRating = value;
+                    ocenaInput.value = value;
+                    updateStars(currentRating);
+                    
+                    // Debug output to console
+                    console.log('Star clicked! Rating set to:', value);
+                    console.log('Hidden input value:', ocenaInput.value);
+                    
+                });
+            });
+            
+            // Image upload preview functionality
+            const uploadBox = document.getElementById('upload-box');
+            const fileInput = document.getElementById('upload_zdjecia');
+            const uploadText = document.getElementById('upload-text');
+            const previewContainer = document.getElementById('preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            const fileName = document.getElementById('file-name');
+            
+            // Click effect for upload box
+            uploadBox.addEventListener('click', function(e) {
+                fileInput.click();
+                uploadBox.classList.add('clicked');
+                setTimeout(() => {
+                    uploadBox.classList.remove('clicked');
+                }, 200);
+            });
+            
+            // File selection handling
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    
+                    // Display file name
+                    fileName.textContent = file.name;
+                    
+                    // Show image preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                        uploadText.textContent = 'Zmień zdjęcie';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // URL input and file input interaction
+            const urlInput = document.getElementById('id_URL_zdjecia');
+            urlInput.addEventListener('input', function() {
+                if (this.value) {
+                    // If URL is provided, clear file input
+                    fileInput.value = '';
+                    previewContainer.style.display = 'none';
+                    uploadText.textContent = '+ dodaj zdjęcie';
+                }
+            });
+
+            // Kod pocztowy - obsługa regionu spoza Polski (ID_Regionu = 17)
+            const regionSelect = document.getElementById('{{ form.ID_Region.auto_id }}') || document.querySelector('[name="{{ form.ID_Region.name }}"]');
+            const kodPocztowyInput = document.getElementById('id_Kod_pocztowy');
+            // Dodaj komunikat o błędzie
+            let kodError = document.createElement('div');
+            kodError.id = 'kod-error';
+            kodError.style.display = 'none';
+            kodError.style.color = 'red';
+            kodError.style.fontSize = '12px';
+            kodError.style.marginTop = '5px';
+            kodPocztowyInput.parentNode.insertBefore(kodError, kodPocztowyInput.nextSibling);
+
+            function checkRegion() {
+                let selectedValue = regionSelect.value;
+                if (selectedValue === "17") {
+                    kodPocztowyInput.disabled = true;
+                    kodPocztowyInput.required = false;
+                    kodPocztowyInput.value = '';
+                    kodPocztowyInput.style.backgroundColor = '#eee';
+                    kodError.style.display = 'none';
+                } else {
+                    kodPocztowyInput.disabled = false;
+                    kodPocztowyInput.required = true;
+                    kodPocztowyInput.style.backgroundColor = '';
+                }
+            }
+
+            if(regionSelect && kodPocztowyInput) {
+                regionSelect.addEventListener('change', checkRegion);
+                checkRegion();
+            }
+
+            // Walidacja kodu pocztowego przy submit
+            form.addEventListener('submit', function(e) {
+                let selectedValue = regionSelect.value;
+                if (selectedValue !== "17") {
+                    const kod = kodPocztowyInput.value.trim();
+                    const kodRegex = /^\d{2}-\d{3}$/;
+                    if (!kodRegex.test(kod)) {
+                        e.preventDefault();
+                        kodError.textContent = 'Kod pocztowy musi być w formacie NN-NNN (np. 22-600)';
+                        kodError.style.display = 'block';
+                        kodPocztowyInput.style.borderColor = 'red';
+                        return false;
+                    } else {
+                        kodError.style.display = 'none';
+                        kodPocztowyInput.style.borderColor = '';
+                    }
+                } else {
+                    kodError.style.display = 'none';
+                    kodPocztowyInput.style.borderColor = '';
+                }
+            });
+
+            // Reset błędu przy zmianie kodu pocztowego
+            kodPocztowyInput.addEventListener('input', function() {
+                kodError.style.display = 'none';
+                kodPocztowyInput.style.borderColor = '';
+            });
+        });
+    </script>
+    
+    <style>
+        .upload-box {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .upload-box:hover {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+        
+        .upload-box.clicked {
+            transform: scale(0.98);
+            background-color: #e6f0ff;
+        }
+        
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #upload-text {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        #file-name {
+            color: #666;
+            word-break: break-all;
+        }
+        
+        #preview-container {
+            margin-top: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .stars-container {
+            display: inline-block;
+            border: 2px solid transparent;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .required-star {
+            color: red;
+            margin-left: 3px;
+        }
+        
+        .rating {
+            margin-bottom: 15px;
+        }
+        
+        .or-separator {
+            color: #666;
+            font-weight: bold;
+            margin: 10px 0;
+            text-align: center;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,273 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Atrakcje</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/atrakcje.css' %}">
+    <style>
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{% url 'strona_glowna' %}">
+            <div><strong>FavPlaces</strong></div>
+        </a>
+        <div style="display: flex; align-items: center;">
+            {% if uzytkownik %}
+                <div class="user-info">{{ uzytkownik.Imie }} {{ uzytkownik.Nazwisko }}</div>
+                <form method="post" action="{% url 'wyloguj' %}">{% csrf_token %}
+                    <button type="submit">Wyloguj</button>
+                </form>
+            {% else %}
+                <a href="{% url 'logowanie' %}"><button>Zaloguj się</button></a>
+                <a href="{% url 'rejestracja' %}"><button>Zarejestruj się</button></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="sub-navbar">
+        <a href="{% url 'atrakcje' %}">Atrakcje </a>
+        <a href="{% url 'historia' %}">Historia </a>
+        <a href="{% url 'ranking' %}">Ranking </a>
+    </div>
+
+    <div class="content" style="display: flex; justify-content: space-between;">
+        <div style="flex-grow: 1;">
+            <div class="atrakcje-search-bar">
+                <form method="get" action="{% url 'atrakcje' %}" class="atrakcje-search-form">
+                    <input type="text" name="q" placeholder="Szukaj miejsc..." value="{{ query }}">
+                    <select name="sort" class="sort-dropdown" onchange="this.form.submit()">
+                        <option value="" {% if not request.GET.sort %}selected{% endif %}>Sortowanie</option>
+                        <option value="asc" {% if request.GET.sort == "asc" %}selected{% endif %}>Alfabetycznie ↑</option>
+                        <option value="desc" {% if request.GET.sort == "desc" %}selected{% endif %}>Alfabetycznie ↓</option>
+                        <option value="rating_asc" {% if request.GET.sort == "rating_asc" %}selected{% endif %}>Oceny ↑</option>
+                        <option value="rating_desc" {% if request.GET.sort == "rating_desc" %}selected{% endif %}>Oceny ↓</option>
+                    </select>
+                </form>
+                {% if uzytkownik %}
+                    <a href="{% url 'dodaj_miejsce' %}">
+                        <button class="add-place-button">Dodaj atrakcje</button>
+                    </a>
+                {% endif %}
+                <button id="open-filters" class="add-place-button">Filtruj</button>
+            </div>
+
+            <!-- aktywne filtry -->
+            <div class="active-filters-container">
+                <span>Aktywne filtry:</span>
+                <div class="active-filters-list">
+                    <!-- Tutaj będą tagi filtrów -->
+                </div>
+            </div>
+
+            <!-- Panel filtrowania -->
+            <div id="filters-panel" class="filters-offcanvas">
+                <div class="filters-header">
+                    <h2>Filtry</h2>
+                    <button id="close-filters">&times;</button>
+                </div>
+                <form method="get" action="{% url 'atrakcje' %}" class="filters-form-panel">
+                    <label>Region:</label>
+                    <div class="filter-columns">
+                        <div class="filter-group">
+                            {% for region in regions|slice:":9" %}
+                            <label>
+                                <input type="checkbox" name="region" value="{{ region.ID_Regionu }}"
+                                    {% if region.ID_Regionu|stringformat:"s" in selected_regions %}checked{% endif %}>
+                                {{ region.Nazwa }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <div class="filter-group">
+                            {% for region in regions|slice:"9:" %}
+                            <label>
+                                <input type="checkbox" name="region" value="{{ region.ID_Regionu }}"
+                                    {% if region.ID_Regionu|stringformat:"s" in selected_regions %}checked{% endif %}>
+                                {{ region.Nazwa }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <label>Kategoria:</label>
+                    <div class="filter-columns">
+                        <div class="filter-group">
+                            {% for category in categories|slice:":5" %}
+                            <label>
+                                <input type="checkbox" name="category" value="{{ category.ID_Kategoria }}"
+                                    {% if category.ID_Kategoria|stringformat:"s" in selected_categories %}checked{% endif %}>
+                                {{ category.Nazwa }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <div class="filter-group">
+                            {% for category in categories|slice:"5:" %}
+                            <label>
+                                <input type="checkbox" name="category" value="{{ category.ID_Kategoria }}"
+                                    {% if category.ID_Kategoria|stringformat:"s" in selected_categories %}checked{% endif %}>
+                                {{ category.Nazwa }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <label>Ocena:</label>
+                    <div class="filter-group">
+                        {% for i in "54321" %}
+                            <label>
+                                <input type="checkbox" name="rating" value="{{ i }}"
+                                {% if i|stringformat:"s" in selected_ratings %}checked{% endif %}>
+                                {{ i }} ⭐
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="filters-buttons">
+                        <button type="submit" class="apply-button">Zastosuj</button>
+                        <a href="{% url 'atrakcje' %}" class="reset-button">Resetuj</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Overlay -->
+            <div id="filters-overlay" class="filters-overlay"></div>
+
+            {% if messages %}
+              {% for message in messages %}
+                <div style="background:#d4edda;color:#155724;padding:10px 20px;border-radius:10px;margin-bottom:15px;border:1px solid #c3e6cb;">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            {% for miejsce in page_obj %}
+            <div class="miejsce-box">
+                {% for zdjecie in miejsce.zdjęcia.all %}
+                    {% if zdjecie.URL %}
+                        <img src="{{ zdjecie.URL }}" alt="Zdjęcie miejsca" width="300">
+                    {% else %}
+                        <p>Brak zdjęcia z URL</p>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="miejsce-info">
+                    <p><strong>Nazwa:</strong> {{ miejsce.Nazwa }}</p>
+                    <p><strong>Adres:</strong> {{ miejsce.Ulica }}, {{ miejsce.Kod_pocztowy }}, {{ miejsce.Miejscowość }}</p>
+                    <p><strong>Ocena:</strong> {{ miejsce.ocena }}/5 ⭐</p>
+                    <a href="{% url 'miejsce_szczegoly' miejsce.ID_Miejsce %}?page={{ page_obj.number }}" class="wiecej-button">Więcej</a>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?{{ params }}&page=1">⏮ Pierwsza</a>
+                        <a href="?{{ params }}&page={{ page_obj.previous_page_number }}">◀ Poprzednia</a>
+                    {% endif %}
+
+                    <span>Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?{{ params }}&page={{ page_obj.next_page_number }}">Następna ▶</a>
+                        <a href="?{{ params }}&page={{ page_obj.paginator.num_pages }}">Ostatnia ⏭</a>
+                    {% endif %}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // filtrowanie
+        const panel = document.getElementById('filters-panel');
+        const overlay = document.getElementById('filters-overlay');
+
+        document.getElementById('open-filters').addEventListener('click', function () {
+            panel.classList.add('show');
+            overlay.classList.add('show');
+        });
+
+        document.getElementById('close-filters').addEventListener('click', function () {
+            panel.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        overlay.addEventListener('click', function () {
+            panel.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        // wyświetlanie aktywnych filtrów
+        const activeFiltersList = document.querySelector('.active-filters-list');
+
+        document.querySelectorAll('.filters-offcanvas input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const category = this.name;           // np. "region"
+                const value = this.value;             // np. "3"
+                const filterId = `${category}-${value}`;
+                const filterLabel = this.closest('label').textContent.trim();
+
+                if (this.checked) {
+                    addFilter(filterLabel, filterId);
+                } else {
+                    // Usuwanie filtra wyłączone, więc nic tu nie rób
+                }
+                saveActiveFiltersToLocalStorage();
+            });
+        });
+
+        function addFilter(name, id) {
+            if (document.getElementById(`filter-${id}`)) return;
+
+            const tag = document.createElement('div');
+            tag.className = 'active-filter-tag';
+            tag.id = `filter-${id}`;
+            tag.textContent = name;
+
+            // Usunięto przycisk '×' - filtry tylko do wyświetlania
+
+            activeFiltersList.appendChild(tag);
+        }
+
+        function saveActiveFiltersToLocalStorage() {
+            const checkedCheckboxes = [...document.querySelectorAll('.filters-offcanvas input[type="checkbox"]:checked')];
+            const activeFilters = checkedCheckboxes.map(cb => ({
+                category: cb.name,
+                value: cb.value,
+                label: cb.closest('label').textContent.trim()
+            }));
+            localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+        }
+
+        function loadActiveFiltersFromLocalStorage() {
+            const stored = localStorage.getItem('activeFilters');
+            if (!stored) return;
+
+            const activeFilters = JSON.parse(stored);
+            activeFilters.forEach(({category, value, label}) => {
+                const checkbox = document.querySelector(`.filters-offcanvas input[name="${category}"][value="${value}"]`);
+                if (checkbox) checkbox.checked = true;
+
+                addFilter(label, `${category}-${value}`);
+            });
+        }
+
+        document.querySelector('.reset-button').addEventListener('click', () => {
+            localStorage.removeItem('activeFilters');
+            // Usuń tagi filtrów z widoku
+            document.querySelectorAll('.active-filter-tag').forEach(tag => tag.remove());
+        });
+
+        // Załaduj filtry po odświeżeniu
+        loadActiveFiltersFromLocalStorage();
+
+    </script>
+</body>
+</html>

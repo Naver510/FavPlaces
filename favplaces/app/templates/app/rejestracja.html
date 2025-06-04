@@ -1,0 +1,15 @@
+{% load static %}
+<html>
+<head>
+    <title>Rejestracja</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login_register.css' %}">
+</head>
+<body>
+    <h2>Formularz rejestracji</h2>
+    <form method="post" autocomplete="off">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Zarejestruj">
+    </form>
+</body>
+</html>
