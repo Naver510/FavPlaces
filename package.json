@@ -1,0 +1,22 @@
+{
+  "name": "favplaces",
+  "version": "1.0.0",
+  "description": "FavPlaces - Django app for managing favorite places",
+  "main": "index.js",
+  "scripts": {
+    "dev": "python favplaces/manage.py runserver 0.0.0.0:8000",
+    "start": "python favplaces/manage.py runserver 0.0.0.0:8000",
+    "build": "python favplaces/manage.py collectstatic --noinput",
+    "migrate": "python favplaces/manage.py migrate",
+    "install-deps": "pip install -r requirements.txt"
+  },
+  "keywords": ["django", "python", "places", "reviews"],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.8.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
