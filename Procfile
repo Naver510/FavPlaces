@@ -1,1 +1,0 @@
-web: gunicorn favplaces.wsgi --log-file -
